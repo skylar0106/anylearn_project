@@ -5,22 +5,24 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import ddwu.com.mobile.anylearn.R
+import ddwu.com.mobile.anylearn.databinding.ActivityWithaiSelectBinding
 
 class WithaiSelect : AppCompatActivity() {
+
+    lateinit var wsBinding: ActivityWithaiSelectBinding
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_withai_select)
+        wsBinding = ActivityWithaiSelectBinding.inflate(layoutInflater)
+        setContentView(wsBinding.root)
 
-        val testButton : Button = findViewById(R.id.school)
-
-        testButton.setOnClickListener {
+        wsBinding.school.setOnClickListener {
             val intent = Intent(this, WithaiLevel::class.java)
             startActivity(intent)
         }
 
-        val settingButton: Button = findViewById(R.id.WithaiSelectSetting)
-        settingButton.setOnClickListener {
-            val intent = Intent(this, SettingPage::class.java)
+        wsBinding.subjectOkBtn.setOnClickListener {
+            val intent = Intent(this, WithaiLevel::class.java)
             startActivity(intent)
         }
     }
