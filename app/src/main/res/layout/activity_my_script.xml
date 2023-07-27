@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/layout_top_bar"
+        android:backgroundTint="#A7BFE4"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/MyScriptTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="AnyLearn"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/MyScriptSetting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:background="#00ff0000"
+            android:text="설정"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/MyScriptTitle"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <SearchView
+        android:id="@+id/script_search"
+        android:layout_width="350dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/base2_style"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+
+    </SearchView>
+
+    <TextView
+        android:id="@+id/script_place"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:paddingLeft="43dp"
+        android:paddingBottom="4dp"
+        android:text="학교"
+        android:textColor="#C8D8EF"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/script_search" />
+
+    <TextView
+        android:id="@+id/script_subject"
+        android:layout_width="308dp"
+        android:layout_height="410dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/base2_style"
+        android:paddingLeft="25dp"
+        android:paddingTop="13dp"
+        android:text="학교에서 대화하기(0)"
+        android:textColor="#375076"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/script_place" />
+
+    <TextView
+        android:id="@+id/script_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="64dp"
+        android:text="2023.01.01"
+        android:textColor="#375076"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/script_place" />
+
+    <TextView
+        android:id="@+id/script_content"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="64dp"
+        android:text="content"
+        android:textColor="#375076"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/script_place" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/script_origin_btn"
+        android:layout_width="71dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginBottom="200dp"
+        android:background="@drawable/button_style"
+        android:text="원본 보기"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/script_changed_btn"
+        android:layout_width="109dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="200dp"
+        android:background="@drawable/button_style"
+        android:text="수정된 표현 보기"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/script_origin_btn" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/script_add_btn"
+        android:layout_width="44dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="200dp"
+        android:background="@drawable/button_style"
+        android:text="추가"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/script_changed_btn" />
+
+    <TextView
+        android:id="@+id/script_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="16dp"
+        android:text="#태그"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/script_origin_btn" />
+
+    <TextView
+        android:id="@+id/script_pre_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="8dp"
+        android:text="&lt; 이전"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/script_tag" />
+
+    <TextView
+        android:id="@+id/script_next_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="8dp"
+        android:text="다음 &gt;"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toEndOf="@+id/script_list_btn"
+        app:layout_constraintTop_toBottomOf="@+id/script_tag" />
+
+    <TextView
+        android:id="@+id/script_list_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="8dp"
+        android:text="목록으로"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toEndOf="@+id/script_pre_btn"
+        app:layout_constraintTop_toBottomOf="@+id/script_tag" />
+
+    <ImageView
+        android:id="@+id/script_home_btn"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@mipmap/home_image" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
