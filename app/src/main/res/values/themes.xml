@@ -12,5 +12,22 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+
     </style>
+    <style name="CustomCalendarWidget" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="CustomDateTextAppearance" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textSize">20sp</item> <!-- 원하는 날짜 텍스트 크기로 변경하세요 -->
+    </style>
+
+    <style name="CalendarDay_Selected">
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+
+
+
 </resources>
