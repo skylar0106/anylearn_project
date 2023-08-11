@@ -78,5 +78,11 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/kakao_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="kakao 로그인" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
