@@ -20,8 +20,7 @@ class SignIn : AppCompatActivity() {
             startActivity(intent)
         }
 
-        /** KakoSDK init */
-        KakaoSdk.init(this, "e421b29a0c6f375748cc83767fee0df7")
+
 
         kakaoButton.setOnClickListener{
 
