@@ -8,6 +8,7 @@ class WebSocketListener : WebSocketListener() {
     override fun onOpen(webSocket: WebSocket, response: Response) {
         webSocket.send("{\"type\":\"ticker\", \"symbols\": [\"BTC_KRW\"], \"tickTypes\": [\"30M\"]}")
         webSocket.close(NORMAL_CLOSURE_STATUS, null) //없을 경우 끊임없이 서버와 통신함
+        Log.d("Socket","Open")
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
