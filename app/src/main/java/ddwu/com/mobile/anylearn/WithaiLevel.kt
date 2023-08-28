@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import ddwu.com.mobile.anylearn.databinding.ActivityWithaiLevelBinding
 import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okio.ByteString
 import java.util.*
 
@@ -48,14 +49,16 @@ class WithaiLevel : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val request: Request = Request.Builder()
-            .url("ws://10.0.2.2:8000/ws/chats/4/")
-            .addHeader("Connection", "close")
-            .build()
-        //val webSocketListener: WebSocketListener = MyWebSocketListener()
 
-//        client.newWebSocket(request, webSocketListener)
-//        client.dispatcher.executorService.shutdown()
+        val request: Request = Request.Builder()
+            .url("ws://35.229.205.158:8000/ws/chats/2/")
+            .addHeader("Connection", "close")
+            .addHeader("Cookie", "sessionid=0qipsz241yko1eek60tqvu9if8yklcz2") // 쿠키 추가
+            .build()
+        val webSocketListener: WebSocketListener = MyWebSocketListener()
+
+        client.newWebSocket(request, webSocketListener)
+        client.dispatcher.executorService.shutdown()
 
         //음성파트
         cThis = this
@@ -77,7 +80,7 @@ class WithaiLevel : AppCompatActivity() {
             }
         }
     }
-}
+
 
 
 //    private val recognitionListener = object : RecognitionListener {
@@ -122,41 +125,39 @@ class WithaiLevel : AppCompatActivity() {
 //    }
 //
 //
-//    inner class MyWebSocketListener : WebSocketListener() {
-//        override fun onOpen(webSocket: WebSocket, response: Response) {
-//            super.onOpen(webSocket, response)
-//            //webSocket.close(NORMAL_CLOSURE_STATUS, null) //없을 경우 끊임없이 서버와 통신함
-//            Log.d("Socket","Open")
-//            val responseBody = response.body?.string()
-//            //val jsonObject = JSONObject(responseBody)
-//
-//        }
-//
-//        override fun onMessage(webSocket: WebSocket, text: String) {
-//            super.onMessage(webSocket, text)
-//            // 서버로부터 텍스트 메시지를 수신했을 때 호출되는 코드
-//        }
-//
-//        override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-//            super.onMessage(webSocket, bytes)
-//        }
-//
-//        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-//            super.onClosing(webSocket, code, reason)
-//        }
-//
-//        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-//            super.onFailure(webSocket, t, response)
-//            Log.d("Socket","Error : " + t.message)
-//        }
-//
-//    }
-//    companion object {
-//        private const val NORMAL_CLOSURE_STATUS = 1000
-//    }
-//
-//
-//}
+    inner class MyWebSocketListener : WebSocketListener() {
+        override fun onOpen(webSocket: WebSocket, response: Response) {
+            super.onOpen(webSocket, response)
+            //webSocket.close(NORMAL_CLOSURE_STATUS, null) //없을 경우 끊임없이 서버와 통신함
+            Log.d("Socket","Open")
+            val responseBody = response.body?.string()
+            //val jsonObject = JSONObject(responseBody)
+
+        }
+
+        override fun onMessage(webSocket: WebSocket, text: String) {
+            super.onMessage(webSocket, text)
+            // 서버로부터 텍스트 메시지를 수신했을 때 호출되는 코드
+        }
+
+        override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+            super.onMessage(webSocket, bytes)
+        }
+
+        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+            super.onClosing(webSocket, code, reason)
+        }
+
+        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            super.onFailure(webSocket, t, response)
+            Log.d("Socket","Error : " + t.message)
+        }
+
+    }
+    companion object {
+        private const val NORMAL_CLOSURE_STATUS = 1000
+    }
+}
 
 //private fun SpeechRecognizer.setRecognitionListener(listener: RecognitionListener) {
 //

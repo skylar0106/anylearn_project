@@ -36,10 +36,10 @@ class MyScriptList : AppCompatActivity() {
         }
 
         // checkConnection 함수 호출
-        checkConnection()
+        checkConnection2()
     }
 
-    private fun checkConnection() {
+    private fun checkConnection2() {
         val retrofit = Retrofit.Builder()
             .baseUrl("http://10.0.2.2:8000/") // 본인의 디장고 서버 URL을 적는다.
             .addConverterFactory(GsonConverterFactory.create())
@@ -53,7 +53,7 @@ class MyScriptList : AppCompatActivity() {
             .build()
 
         val apiService = retrofit.create(ScriptsApiService::class.java)
-        val call: Call<Void> = apiService.checkConnection()
+        val call: Call<Void> = apiService.checkConnection2()
 
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
