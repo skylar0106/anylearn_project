@@ -1,6 +1,7 @@
 package ddwu.com.mobile.anylearn
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.style.ForegroundColorSpan
@@ -57,6 +58,15 @@ class MyDiaryMain : AppCompatActivity() {
 
         // 클릭한 날짜의 글자색을 변경하는 Decorator를 추가합니다.
         mdmBinding.calendarView.addDecorator(clickDateDecorator)
+
+        mdmBinding.diaryMainHomeBtn.setOnClickListener{
+            val intent = Intent(this, MainPage::class.java)
+            startActivity(intent)
+        }
+        mdmBinding.diaryMainMainBarOption.setOnClickListener{
+            val intent = Intent(this, SettingPage::class.java)
+            startActivity(intent)
+        }
     }
     inner class TodayDecorator(context: Context): DayViewDecorator {
         private var date = CalendarDay.today()

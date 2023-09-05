@@ -1,6 +1,5 @@
 package ddwu.com.mobile.anylearn
 
-import ScriptsApiService
 import ScriptsGetService
 import android.content.Intent
 import android.os.Bundle
@@ -53,7 +52,6 @@ class MyScriptList : AppCompatActivity() {
             )
             .build()
 
-        val apiService = retrofit.create(ScriptsApiService::class.java)
         val scriptGetService = retrofit.create(ScriptsGetService::class.java)
         val call: Call<Void> = scriptGetService.scriptsConnection()
 

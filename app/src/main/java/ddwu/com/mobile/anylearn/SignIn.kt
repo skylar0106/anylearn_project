@@ -1,12 +1,11 @@
 package ddwu.com.mobile.anylearn
 
 import CsrfTokenInterceptor
-import ScriptsApiService
+import SignInApiService
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import ddwu.com.mobile.anylearn.databinding.ActivitySignInBinding
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -66,7 +65,7 @@ class SignIn : AppCompatActivity() {
             )
             .build()
 
-        val apiService = retrofit.create(ScriptsApiService::class.java)
+        val apiService = retrofit.create(SignInApiService::class.java)
         val call: Call<Void> = apiService.checkConnection(mapOf(
             "email" to requestBody1,
             "password" to requestBody2
