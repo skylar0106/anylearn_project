@@ -1,6 +1,7 @@
 package ddwu.com.mobile.anylearn
 
 import ScriptsApiService
+import ScriptsGetService
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -41,7 +42,7 @@ class MyScriptList : AppCompatActivity() {
 
     private fun checkConnection2() {
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000/") // 본인의 디장고 서버 URL을 적는다.
+            .baseUrl("http://34.81.3.83:8000/") // 본인의 디장고 서버 URL을 적는다.
             .addConverterFactory(GsonConverterFactory.create())
             .client(
                 OkHttpClient.Builder()
@@ -53,7 +54,8 @@ class MyScriptList : AppCompatActivity() {
             .build()
 
         val apiService = retrofit.create(ScriptsApiService::class.java)
-        val call: Call<Void> = apiService.checkConnection2()
+        val scriptGetService = retrofit.create(ScriptsGetService::class.java)
+        val call: Call<Void> = scriptGetService.scriptsConnection()
 
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {

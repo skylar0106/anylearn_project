@@ -25,25 +25,23 @@ class SignIn : AppCompatActivity() {
         siBinding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(siBinding.root)
 
-        val loginButton : Button = findViewById(R.id.btn_start)
-        val kakaoButton : Button = findViewById(R.id.kakao_login)
-
-
-            siBinding.btnStart.setOnClickListener {
-            val intent = Intent(this, FirstSetting::class.java)
-            startActivity(intent)
-
+        //로그인
+        siBinding.btnStart.setOnClickListener {
             val email = siBinding.textEmail.text.toString()
             val password = siBinding.textName.text.toString()
+
+            val intent = Intent(this@SignIn, FirstSetting::class.java)
+            startActivity(intent)
 
             checkConnection(email, password)
         }
 
+        siBinding.btnJoin.setOnClickListener{
+            val intent = Intent(this, SignUp1::class.java)
+            startActivity(intent)
+        }
 
-
-
-
-        kakaoButton.setOnClickListener{
+        siBinding.kakaoLogin.setOnClickListener{
 
         }
 
@@ -57,7 +55,7 @@ class SignIn : AppCompatActivity() {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://35.229.205.158:8000/") // 본인의 디장고 서버 URL을 적는다.
+            .baseUrl("http://34.81.3.83:8000/") // 본인의 디장고 서버 URL을 적는다.
             .addConverterFactory(GsonConverterFactory.create())
             .client(
                 OkHttpClient.Builder()
@@ -78,6 +76,8 @@ class SignIn : AppCompatActivity() {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     Log.d("Connection", "HTTP connection successful")
+                    val intent = Intent(this@SignIn, FirstSetting::class.java)
+                    startActivity(intent)
                 } else {
                     Log.e(
                         "Connection",

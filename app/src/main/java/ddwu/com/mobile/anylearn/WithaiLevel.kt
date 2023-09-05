@@ -1,36 +1,28 @@
 package ddwu.com.mobile.anylearn
 
-import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.speech.tts.TextToSpeech
-import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import ddwu.com.mobile.anylearn.databinding.ActivityWithaiLevelBinding
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import okhttp3.*
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import android.Manifest
+import android.os.Build
+import android.util.Log
+import ddwu.com.mobile.anylearn.databinding.ActivityWithaiLevelBinding
 import okio.ByteString
-import java.util.*
 
 
 class WithaiLevel : AppCompatActivity() {
 
     lateinit var wlBinding: ActivityWithaiLevelBinding
     lateinit var client: OkHttpClient
-
-    lateinit var cThis: Context//context 설정
-    var LogTT = "[STT]" //LOG타이틀
-
-    //음성 인식용
-    lateinit var SttIntent: Intent
-    lateinit var mRecognizer: SpeechRecognizer
-
-    //음성 출력용
-    lateinit var tts: TextToSpeech
-
+    private lateinit var speechRecognizer: SpeechRecognizer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,80 +43,98 @@ class WithaiLevel : AppCompatActivity() {
 
 
         val request: Request = Request.Builder()
-            .url("ws://35.229.205.158:8000/ws/chats/2/")
+            .url("ws://34.81.3.83:8000/ws/chats/2/")
             .addHeader("Connection", "close")
-            .addHeader("Cookie", "sessionid=0qipsz241yko1eek60tqvu9if8yklcz2") // 쿠키 추가
+            .addHeader("Cookie", "sessionid=dns1cinctph2xews0003x7ubbj41znyc") // 쿠키 추가
             .build()
         val webSocketListener: WebSocketListener = MyWebSocketListener()
 
         client.newWebSocket(request, webSocketListener)
         client.dispatcher.executorService.shutdown()
 
-        //음성파트
-        cThis = this
 
-        //음성인식
-//        SttIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-//        SttIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, applicationContext.packageName)
-//        SttIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR") //한국어 사용
-//
-//        mRecognizer = SpeechRecognizer.createSpeechRecognizer(cThis)
-//        mRecognizer.setRecognitionListener(recognitionListener)
+        // 권한 설정
+        requestPermission()
 
-        //음성출력 생성, 리스너 초기화
+        // RecognizerIntent 생성
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)    // 여분의 키
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")         // 언어 설정
 
-        //음성출력 생성, 리스너 초기화
-        tts = TextToSpeech(cThis) { status ->
-            if (status != TextToSpeech.ERROR) {
-                tts.language = Locale.KOREAN
-            }
+
+        // 완전한 침묵이 감지되면 인식을 종료하는 시간 설정 (예: 3초)
+        //intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 4000)
+
+        // <말하기> 버튼 눌러서 음성인식 시작
+        wlBinding.mikeImage.setOnClickListener {
+            // 새 SpeechRecognizer 를 만드는 팩토리 메서드
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this@WithaiLevel)
+            speechRecognizer.setRecognitionListener(recognitionListener)    // 리스너 설정
+            speechRecognizer.startListening(intent)                         // 듣기 시작
         }
     }
 
 
 
-//    private val recognitionListener = object : RecognitionListener {
-//        override fun onReadyForSpeech(bundle: Bundle) {
-//            txtSystem.setText("onReadyForSpeech...........\r\n${txtSystem.text}")
-//        }
-//
-//        override fun onBeginningOfSpeech() {
-//            txtSystem.setText("지금부터 말을 해주세요...........\r\n${txtSystem.text}")
-//        }
-//
-//        override fun onRmsChanged(v: Float) {}
-//
-//        override fun onBufferReceived(bytes: ByteArray) {
-//            txtSystem.setText("onBufferReceived...........\r\n${txtSystem.text}")
-//        }
-//
-//        override fun onEndOfSpeech() {
-//            txtSystem.setText("onEndOfSpeech...........\r\n${txtSystem.text}")
-//        }
-//
-//        override fun onError(i: Int) {
-//            txtSystem.setText("천천히 다시 말해 주세요...........\r\n${txtSystem.text}")
-//        }
-//
-//        override fun onResults(results: Bundle) {
-//            val key = SpeechRecognizer.RESULTS_RECOGNITION
-//            val mResult = results.getStringArrayList(key)
-//            val rs = mResult?.toTypedArray()
-//            txtInMsg.setText("${rs?.get(0)}\r\n${txtInMsg.text}")
-//            rs?.get(0)?.let { FuncVoiceOrderCheck(it) }
-//            mRecognizer.startListening(SttIntent)
-//        }
-//
-//        override fun onPartialResults(bundle: Bundle) {
-//            txtSystem.setText("onPartialResults...........\r\n${txtSystem.text}")
-//        }
-//
-//        override fun onEvent(i: Int, bundle: Bundle) {
-//            txtSystem.setText("onEvent...........\r\n${txtSystem.text}")
-//        }
-//    }
-//
-//
+    // 권한 설정 메소드
+    private fun requestPermission() {
+        // 버전 체크, 권한 허용했는지 체크
+        if (Build.VERSION.SDK_INT >= 23 &&
+            ContextCompat.checkSelfPermission(this@WithaiLevel, Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this@WithaiLevel,
+                arrayOf(Manifest.permission.RECORD_AUDIO), 0)
+        }
+    }
+
+    // 리스너 설정
+    private val recognitionListener: RecognitionListener = object : RecognitionListener {
+        // 말하기 시작할 준비가되면 호출
+        override fun onReadyForSpeech(params: Bundle) {
+            Toast.makeText(this@WithaiLevel, "음성인식 시작", Toast.LENGTH_SHORT).show()
+        }
+        // 말하기 시작했을 때 호출
+        override fun onBeginningOfSpeech() {
+            Toast.makeText(this@WithaiLevel, "잘 듣고 있어요!", Toast.LENGTH_SHORT).show()
+        }
+        // 입력받는 소리의 크기를 알려줌
+        override fun onRmsChanged(rmsdB: Float) {}
+        // 말을 시작하고 인식이 된 단어를 buffer에 담음
+        override fun onBufferReceived(buffer: ByteArray) {}
+        // 말하기를 중지하면 호출
+        override fun onEndOfSpeech() {
+            Toast.makeText(this@WithaiLevel, "끝!", Toast.LENGTH_SHORT).show()
+        }
+        // 오류 발생했을 때 호출
+        override fun onError(error: Int) {
+            val message = when (error) {
+                SpeechRecognizer.ERROR_AUDIO -> "오디오 에러"
+                SpeechRecognizer.ERROR_CLIENT -> "클라이언트 에러"
+                SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "퍼미션 없음"
+                SpeechRecognizer.ERROR_NETWORK -> "네트워크 에러"
+                SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "네트웍 타임아웃"
+                //SpeechRecognizer.ERROR_NO_MATCH -> "찾을 수 없음"
+                SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "RECOGNIZER 가 바쁨"
+                SpeechRecognizer.ERROR_SERVER -> "서버가 이상함"
+                SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "말하는 시간초과"
+                else -> "알 수 없는 오류임"
+            }
+            Toast.makeText(this@WithaiLevel, "에러 발생: $message", Toast.LENGTH_SHORT).show()
+        }
+        // 인식 결과가 준비되면 호출
+        override fun onResults(results: Bundle) {
+            // 말을 하면 ArrayList에 단어를 넣고 textView에 단어를 이어줌
+            val matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+            for (i in matches!!.indices) wlBinding.editRecord.setText(matches[i])
+        }
+        // 부분 인식 결과를 사용할 수 있을 때 호출
+        override fun onPartialResults(partialResults: Bundle) {}
+        // 향후 이벤트를 추가하기 위해 예약
+        override fun onEvent(eventType: Int, params: Bundle) {}
+    }
+
+
     inner class MyWebSocketListener : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
@@ -159,9 +169,6 @@ class WithaiLevel : AppCompatActivity() {
     }
 }
 
-//private fun SpeechRecognizer.setRecognitionListener(listener: RecognitionListener) {
-//
-//}
 
 
 
