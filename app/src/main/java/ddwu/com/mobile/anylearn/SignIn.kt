@@ -33,8 +33,8 @@ class SignIn : AppCompatActivity() {
 
         //로그인
         siBinding.btnStart.setOnClickListener {
-            val email = siBinding.textEmail.text.toString()
-            val password = siBinding.textName.text.toString()
+            val email = siBinding.editEmail.text.toString()
+            val password = siBinding.editName.text.toString()
 
             val intent = Intent(this@SignIn, FirstSetting::class.java)
             startActivity(intent)
