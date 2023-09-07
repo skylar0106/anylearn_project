@@ -19,11 +19,6 @@ class SignUp1 : AppCompatActivity() {
         suBinding1 = ActivitySignUp1Binding.inflate(layoutInflater)
         setContentView(suBinding1.root)
 
-        val email = suBinding1.editEmail.text.toString()
-        val name = suBinding1.editName.text.toString()
-        val birth = suBinding1.editBirth.text.toString()
-
-
         suBinding1.btnBirth.setOnClickListener {
             val cal = Calendar.getInstance()
             val data = DatePickerDialog.OnDateSetListener { view, year, month, day ->
@@ -32,11 +27,6 @@ class SignUp1 : AppCompatActivity() {
             }
             DatePickerDialog(this, data, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
         }
-
-        val phone = suBinding1.editPhone.text.toString()
-        val pwd = suBinding1.editPwd2.text.toString()
-        val pwdCheck = suBinding1.editPwdCheck.text.toString()
-
 
         suBinding1.btnStart.setOnClickListener{
             val email = suBinding1.editEmail.text.toString()
