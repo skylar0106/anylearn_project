@@ -33,8 +33,8 @@ class SignIn : AppCompatActivity() {
 
         //로그인
         siBinding.btnStart.setOnClickListener {
-            val email = siBinding.textEmail.text.toString()
-            val password = siBinding.textName.text.toString()
+            val email = siBinding.editEmail.text.toString()
+            val password = siBinding.editName.text.toString()
 
             val intent = Intent(this@SignIn, FirstSetting::class.java)
             startActivity(intent)
@@ -95,20 +95,8 @@ class SignIn : AppCompatActivity() {
         @SerializedName("password") val password: String)
 
     private fun checkConnection(requestBody1: String, requestBody2: String) {
+        val apiService = RetrofitConfig.retrofit.create(SignInApiService::class.java)
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://34.81.3.83:8000/") // 본인의 디장고 서버 URL을 적는다.
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(
-                OkHttpClient.Builder()
-                    .addInterceptor(HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-                    })
-                    .build()
-            )
-            .build()
-
-        val apiService = retrofit.create(SignInApiService::class.java)
         // YourTokenRequestModel 객체 생성 및 전달
         val requestModel = YourTokenRequestModel(email = requestBody1, password = requestBody2)
         val call: Call<YourTokenResponseModel> = apiService.getToken(requestModel)

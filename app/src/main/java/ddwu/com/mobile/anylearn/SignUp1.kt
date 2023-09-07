@@ -1,13 +1,19 @@
 package ddwu.com.mobile.anylearn
 
+import SignupApiService
 import android.app.DatePickerDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import com.google.gson.annotations.SerializedName
 import ddwu.com.mobile.anylearn.R
 import ddwu.com.mobile.anylearn.databinding.ActivitySignUp1Binding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
 class SignUp1 : AppCompatActivity() {
@@ -38,6 +44,7 @@ class SignUp1 : AppCompatActivity() {
         val pwdCheck = suBinding1.editPwdCheck.text.toString()
 
 
+
         suBinding1.btnStart.setOnClickListener{
             val email = suBinding1.editEmail.text.toString()
             val name = suBinding1.editName.text.toString()
@@ -59,9 +66,54 @@ class SignUp1 : AppCompatActivity() {
             else if(pwdCheck.isEmpty())
                 Toast.makeText(applicationContext, "비밀번호를 한번 더 입력해주세요", LENGTH_SHORT).show()
             else {
+                signUpInfo(birth, phone, name, email, pwd)
                 val intent = Intent(this, SignUp2::class.java)
                 startActivity(intent)
             }
+
         }
     }
+
+    data class SignupResponseModel(
+        @SerializedName("id") val id: String
+    )
+    data class SignupRequestModel(
+        @SerializedName("username") val birth: String,
+        @SerializedName("phonenumber") val phone: String,
+        @SerializedName("nickname") val name: String,
+        @SerializedName("email") val email: String,
+        @SerializedName("password") val pwd: String
+    )
+
+    private fun signUpInfo(birth: String, phone: String, name: String, email: String, pwd: String) {
+        val apiService = RetrofitConfig.retrofit.create(SignupApiService::class.java)
+
+        // SignupRequestModel 객체 생성 및 전달
+        val requestModel = SignupRequestModel(birth, phone, name, email, pwd)
+        val call: Call<SignupResponseModel> = apiService.signup(requestModel)
+
+        call.enqueue(object : Callback<SignupResponseModel> {
+            override fun onResponse(call: Call<SignupResponseModel>, response: Response<SignupResponseModel>) {
+                if (response.isSuccessful) {
+                    val responseData = response.body()
+                    // 서버로부터 받은 응답 데이터 처리
+                    if (responseData != null) {
+                        // 처리할 작업 수행
+                    } else {
+                        Log.e("Signup", "Response body is null")
+                    }
+                } else {
+                    Log.e(
+                        "Signup",
+                        "HTTP signup request failed. Error code: ${response.code()}"
+                    )
+                }
+            }
+
+            override fun onFailure(call: Call<SignupResponseModel>, t: Throwable) {
+                Log.e("Signup", "HTTP signup request error: ${t.message}")
+            }
+        })
+    }
+
 }
