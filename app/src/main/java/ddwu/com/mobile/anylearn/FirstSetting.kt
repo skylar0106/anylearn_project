@@ -13,8 +13,6 @@ class FirstSetting : AppCompatActivity() {
         setContentView(R.layout.activity_first_setting)
 
         android.os.Handler().postDelayed({
-            val intent = Intent(this, MainPage::class.java)
-            startActivity(intent)
             finish() // 현재 액티비티 종료
         }, delayMillis)
     }

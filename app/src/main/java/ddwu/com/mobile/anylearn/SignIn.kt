@@ -124,7 +124,7 @@ class SignIn : AppCompatActivity() {
                         Log.d("Token", "Received token: $tokenResponse")
 
                         // 다음 단계로 진행하거나 필요한 작업을 수행하세요.
-                        val intent = Intent(this@SignIn, FirstSetting::class.java)
+                        val intent = Intent(this@SignIn, MainPage::class.java)
                         startActivity(intent)
                     } else {
                         Log.e("Token", "Token response body is null")
