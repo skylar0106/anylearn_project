@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.google.gson.annotations.SerializedName
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -18,6 +19,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 
 class SignIn : AppCompatActivity() {
@@ -83,12 +85,17 @@ class SignIn : AppCompatActivity() {
         }
 
     }
-    private fun checkConnection(requestBody1: String, requestBody2: String) {
-        val csrfToken = "TeRgsQ77RizByRhRzs3u2H7BCUsbcmrl"
 
-        val httpClient: OkHttpClient = OkHttpClient.Builder()
-            .addInterceptor(CsrfTokenInterceptor(csrfToken))
-            .build()
+    //토큰 모델
+    data class YourTokenResponseModel(
+        @SerializedName("token") val token: String // 서버 응답에서 토큰 필드에 맞게 조정
+    )
+
+    data class YourTokenRequestModel(
+        @SerializedName("email") val email: String,
+        @SerializedName("password") val password: String)
+
+    private fun checkConnection(requestBody1: String, requestBody2: String) {
 
         val retrofit = Retrofit.Builder()
             .baseUrl("http://34.81.3.83:8000/") // 본인의 디장고 서버 URL을 적는다.
@@ -103,27 +110,35 @@ class SignIn : AppCompatActivity() {
             .build()
 
         val apiService = retrofit.create(SignInApiService::class.java)
-        val call: Call<Void> = apiService.checkConnection(mapOf(
-            "email" to requestBody1,
-            "password" to requestBody2
-        ))
+        // YourTokenRequestModel 객체 생성 및 전달
+        val requestModel = YourTokenRequestModel(email = requestBody1, password = requestBody2)
+        val call: Call<YourTokenResponseModel> = apiService.getToken(requestModel)
 
-        call.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+        call.enqueue(object : Callback<YourTokenResponseModel> {
+            override fun onResponse(call: Call<YourTokenResponseModel>, response: Response<YourTokenResponseModel>) {
                 if (response.isSuccessful) {
-                    Log.d("Connection", "HTTP connection successful")
-                    val intent = Intent(this@SignIn, FirstSetting::class.java)
-                    startActivity(intent)
+                    val tokenResponse = response.body()
+                    val token = tokenResponse?.token
+                    if (token != null) {
+                        // 여기에서 토큰을 사용할 수 있습니다.
+                        Log.d("Token", "Received token: $tokenResponse")
+
+                        // 다음 단계로 진행하거나 필요한 작업을 수행하세요.
+                        val intent = Intent(this@SignIn, FirstSetting::class.java)
+                        startActivity(intent)
+                    } else {
+                        Log.e("Token", "Token response body is null")
+                    }
                 } else {
                     Log.e(
-                        "Connection",
-                        "HTTP connection failed. Error code: ${response.code()}"
+                        "Token",
+                        "HTTP token request failed. Error code: ${response.code()}"
                     )
                 }
             }
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Log.e("Connection", "HTTP connection error: ${t.message}")
+            override fun onFailure(call: Call<YourTokenResponseModel>, t: Throwable) {
+                Log.e("Token", "HTTP token request error: ${t.message}")
             }
         })
     }
