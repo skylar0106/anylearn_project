@@ -17,6 +17,16 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:id="@+id/memberCheck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0"
+            android:foregroundTint="#FDFDFD"
+            android:gravity="center"
+            android:text="회원이 아닙니다. ID/PW를 확인해주세요."
+            android:textColor="#FF0000" />
+
+        <TextView
             android:id="@+id/text_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -115,17 +115,20 @@ class SignIn : AppCompatActivity() {
                         startActivity(intent)
                     } else {
                         Log.e("Token", "Token response body is null")
+                        siBinding.memberCheck.alpha = 1F
                     }
                 } else {
                     Log.e(
                         "Token",
                         "HTTP token request failed. Error code: ${response.code()}"
                     )
+                    siBinding.memberCheck.alpha = 1F
                 }
             }
 
             override fun onFailure(call: Call<YourTokenResponseModel>, t: Throwable) {
                 Log.e("Token", "HTTP token request error: ${t.message}")
+                siBinding.memberCheck.alpha = 1F
             }
         })
     }
