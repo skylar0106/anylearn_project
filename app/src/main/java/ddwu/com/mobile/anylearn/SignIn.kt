@@ -6,10 +6,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-<<<<<<< HEAD
-=======
 import com.google.gson.annotations.SerializedName
->>>>>>> 1142ddc0b642facf09bf548b4ebdaaefbe1b8e5c
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -23,8 +20,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-
-
 
 class SignIn : AppCompatActivity() {
 
@@ -41,8 +36,8 @@ class SignIn : AppCompatActivity() {
             val email = siBinding.textEmail.text.toString()
             val password = siBinding.textName.text.toString()
 
-//            val intent = Intent(this@SignIn, FirstSetting::class.java)
-//            startActivity(intent)
+            val intent = Intent(this@SignIn, FirstSetting::class.java)
+            startActivity(intent)
 
             checkConnection(email, password)
         }
@@ -53,20 +48,6 @@ class SignIn : AppCompatActivity() {
         }
 
         kakaoLogin = KakaoLogin(application)
-<<<<<<< HEAD
-
-        siBinding.kakaoLogin.setOnClickListener{
-            // 카카오계정으로 로그인 공통 callback 구성
-// 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
-            val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
-                if (error != null) {
-                    Log.e(KakaoLogin.TAG, "카카오계정으로 로그인 실패", error)
-                } else if (token != null) {
-                    Log.i(KakaoLogin.TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-                }
-            }
-
-=======
 
         siBinding.kakaoLogin.setOnClickListener{
             // 카카오계정으로 로그인 공통 callback 구성
@@ -118,7 +99,13 @@ class SignIn : AppCompatActivity() {
         val retrofit = Retrofit.Builder()
             .baseUrl("http://34.81.3.83:8000/") // 본인의 디장고 서버 URL을 적는다.
             .addConverterFactory(GsonConverterFactory.create())
-            .client(httpClient)
+            .client(
+                OkHttpClient.Builder()
+                    .addInterceptor(HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    })
+                    .build()
+            )
             .build()
 
         val apiService = retrofit.create(SignInApiService::class.java)
@@ -136,7 +123,7 @@ class SignIn : AppCompatActivity() {
                         Log.d("Token", "Received token: $tokenResponse")
 
                         // 다음 단계로 진행하거나 필요한 작업을 수행하세요.
-                        val intent = Intent(this@SignIn, FirstSetting::class.java)
+                        val intent = Intent(this@SignIn, MainPage::class.java)
                         startActivity(intent)
                     } else {
                         Log.e("Token", "Token response body is null")
