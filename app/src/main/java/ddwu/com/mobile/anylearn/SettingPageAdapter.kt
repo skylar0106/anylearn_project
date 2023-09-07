@@ -38,15 +38,19 @@ class SettingPageAdapter(private val menuItems: List<String>, private val contex
                         val intent = Intent(context, NotificationSettingPage::class.java)
                         context.startActivity(intent)
                     }
-                    "소리 설정" -> {
-                        val intent = Intent(context, SoundSettingPage::class.java)
-                        context.startActivity(intent)
-                    }
                     "화면 설정" -> {
                         val intent = Intent(context, DisplaySettingPage::class.java)
                         context.startActivity(intent)
                     }
                     "모드 설정" -> {
+                        val intent = Intent(context, ModeSettingPage::class.java)
+                        context.startActivity(intent)
+                    }
+                    "로그아웃" -> {
+                        val intent = Intent(context, ModeSettingPage::class.java)
+                        context.startActivity(intent)
+                    }
+                    "계정 탈퇴" -> {
                         val intent = Intent(context, ModeSettingPage::class.java)
                         context.startActivity(intent)
                     }
