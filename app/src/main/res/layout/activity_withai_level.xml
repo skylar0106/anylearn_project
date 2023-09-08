@@ -91,20 +91,24 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
         android:text="어떻게 지내요?"
-        android:textColor="#000000"
-        android:textSize="23sp"
+        android:textColor="#575353"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ai_image" />
 
-    <EditText
+    <TextView
         android:id="@+id/edit_record"
-        android:layout_width="wrap_content"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:textSize="23sp"
+        android:inputType="textMultiLine"
+        android:maxLines="3"
+        android:scrollHorizontally="false"
+        android:textColor="#000000"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/korean_subtitle" />
@@ -123,8 +127,8 @@
 
     <ImageView
         android:id="@+id/mike_image"
-        android:layout_width="60dp"
-        android:layout_height="85dp"
+        android:layout_width="50dp"
+        android:layout_height="75dp"
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

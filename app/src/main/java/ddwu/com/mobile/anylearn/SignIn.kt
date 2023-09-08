@@ -1,6 +1,7 @@
 package ddwu.com.mobile.anylearn
 
 import CsrfTokenInterceptor
+import FetchCsrfTokenTask
 import SignInApiService
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -35,10 +36,15 @@ class SignIn : AppCompatActivity() {
             val email = siBinding.textEmail.text.toString()
             val password = siBinding.textName.text.toString()
 
-            val intent = Intent(this@SignIn, FirstSetting::class.java)
-            startActivity(intent)
+//            val intent = Intent(this@SignIn, FirstSetting::class.java)
+//            startActivity(intent)
 
-            checkConnection(email, password)
+            FetchCsrfTokenTask(object : FetchCsrfTokenTask.CsrfTokenListener {
+                override fun onCsrfTokenFetched(csrfToken: String) {
+                    checkConnection(csrfToken, email, password)
+                }
+            }).execute("http://34.81.3.83:8000/")
+
         }
 
         siBinding.btnJoin.setOnClickListener{
@@ -83,23 +89,20 @@ class SignIn : AppCompatActivity() {
         }
 
     }
-    private fun checkConnection(requestBody1: String, requestBody2: String) {
-        val csrfToken = "TeRgsQ77RizByRhRzs3u2H7BCUsbcmrl"
+    private fun checkConnection(requestBody1: String, requestBody2: String, csrfToken: String) {
+        //val csrfToken = "TeRgsQ77RizByRhRzs3u2H7BCUsbcmrl"
 
         val httpClient: OkHttpClient = OkHttpClient.Builder()
             .addInterceptor(CsrfTokenInterceptor(csrfToken))
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://34.81.3.83:8000/") // 본인의 디장고 서버 URL을 적는다.
+            .baseUrl("http://34.81.3.83:8000/") // 본인의 Django 서버 URL을 적는다.
             .addConverterFactory(GsonConverterFactory.create())
-            .client(
-                OkHttpClient.Builder()
-                    .addInterceptor(HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-                    })
-                    .build()
-            )
+            .client(httpClient)
             .build()
 
         val apiService = retrofit.create(SignInApiService::class.java)
