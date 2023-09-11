@@ -24,8 +24,8 @@ class MySharedPreferences(context: Context) {
     }
 
     // 세션 ID를 저장하는 함수
-    fun saveTokenKey(sessionId: String) {
-        editor.putString(TOKEN_KEY, sessionId)
+    fun saveTokenKey(csrfToken: String) {
+        editor.putString(TOKEN_KEY, csrfToken)
         editor.apply()
     }
 

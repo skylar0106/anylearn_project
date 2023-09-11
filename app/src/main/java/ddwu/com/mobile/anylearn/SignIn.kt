@@ -86,10 +86,6 @@ class SignIn : AppCompatActivity() {
 
     //토큰 모델
     data class YourTokenResponseModel(
-        @SerializedName("token") val token: String,
-        @SerializedName("session_id") val sessionId: String, // sessionId 필드 추가
-        @SerializedName("user_id") val userId: String,
-        @SerializedName("email") val email: String,
         @SerializedName("ok") val ok: String
     )
 
@@ -111,27 +107,35 @@ class SignIn : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val tokenResponse = response.body()
 
-                    val token = tokenResponse?.token
-                    mySharedPreferences.saveTokenKey(token.toString())
 
-                    val sessionId = tokenResponse?.sessionId // sessionId 값을 가져옴
-                    mySharedPreferences.saveSessionId(sessionId.toString()) // Access the session field here
 
-                    val userId = tokenResponse?.userId
-                    val email = tokenResponse?.email
                     val ok = tokenResponse?.ok
 
-                    if (token != null) {
                         // 여기에서 토큰을 사용할 수 있습니다.
-                        Log.d("Token", "Received token: $token" +
-                                "user_id: $userId"+"email: $email"+"ok: $ok")
+                        Log.d("login", "ok: $ok")
 
-                        // 다음 단계로 진행하거나 필요한 작업을 수행하세요.
-                        val intent = Intent(this@SignIn, MainPage::class.java)
-                        startActivity(intent)
-                    } else {
-                        Log.e("Token", "Token response body is null")
 
+                    val headers = response.headers()
+
+                    // "Set-Cookie" 헤더에서 csrftoken 쿠키를 추출
+                    val cookies = headers.values("Set-Cookie")
+                    for (cookie in cookies) {
+                        if (cookie.contains("csrftoken")) {
+                            val csrfToken = extractCsrfToken(cookie)
+                            // 추출한 csrfToken을 사용
+                            Log.d("csrfToken", "Received token: $csrfToken")
+
+                            // 다음 단계로 진행하거나 필요한 작업을 수행하세요.
+                            mySharedPreferences.saveTokenKey(csrfToken.toString())
+
+                            val intent = Intent(this@SignIn, MainPage::class.java)
+                            startActivity(intent)
+                        }
+                        if (cookie.contains("session_id")) {
+                            val sessionId = extractSessionId(cookie)
+                            Log.d("sessionId", "Received session: $csrfToken")
+                            mySharedPreferences.saveSessionId(sessionId.toString()) // Access the session field here
+                        }
                     }
                 } else {
                     Log.e(
@@ -147,6 +151,30 @@ class SignIn : AppCompatActivity() {
 
             }
         })
+    }
+    fun extractCsrfToken(cookie: String): String? {
+        val tokenStartIndex = cookie.indexOf("csrftoken=")
+        if (tokenStartIndex == -1) {
+            return null
+        }
+        val tokenEndIndex = cookie.indexOf(";", tokenStartIndex)
+        return if (tokenEndIndex == -1) {
+            cookie.substring(tokenStartIndex + 10)
+        } else {
+            cookie.substring(tokenStartIndex + 10, tokenEndIndex)
+        }
+    }
+    fun extractSessionId(cookie: String): String? {
+        val sessionIdStartIndex = cookie.indexOf("session_id=")
+        if (sessionIdStartIndex == -1) {
+            return null
+        }
+        val sessionIdEndIndex = cookie.indexOf(";", sessionIdStartIndex)
+        return if (sessionIdEndIndex == -1) {
+            cookie.substring(sessionIdStartIndex + 11)
+        } else {
+            cookie.substring(sessionIdStartIndex + 11, sessionIdEndIndex)
+        }
     }
 
 }

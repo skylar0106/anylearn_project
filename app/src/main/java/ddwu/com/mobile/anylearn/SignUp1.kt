@@ -58,6 +58,8 @@ class SignUp1 : AppCompatActivity() {
                 Toast.makeText(applicationContext, "비밀번호를 입력해주세요", LENGTH_SHORT).show()
             else if(pwdCheck.isEmpty())
                 Toast.makeText(applicationContext, "비밀번호를 한번 더 입력해주세요", LENGTH_SHORT).show()
+            else if(pwd != pwdCheck)
+                Toast.makeText(applicationContext, "입력한 비밀번호가 동일하지 않습니다", LENGTH_SHORT).show()
             else {
                 signUpInfo(birth, phone, name, email, pwd)
                 val intent = Intent(this, SignUp2::class.java)

@@ -71,10 +71,7 @@
         <activity
             android:name=".ModeSettingPage"
             android:exported="false" />
-        <activity
-            android:name=".SoundSettingPage"
-            android:exported="false" />
-        <activity
+          <activity
             android:name=".NotificationSettingPage"
             android:exported="false" />
         <activity
@@ -97,7 +94,6 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
                 <data android:host="oauth"
                     android:scheme="@string/kakao_oauth_host" />

@@ -46,14 +46,6 @@ class SettingPageAdapter(private val menuItems: List<String>, private val contex
                         val intent = Intent(context, ModeSettingPage::class.java)
                         context.startActivity(intent)
                     }
-                    "로그아웃" -> {
-                        val intent = Intent(context, ModeSettingPage::class.java)
-                        context.startActivity(intent)
-                    }
-                    "계정 탈퇴" -> {
-                        val intent = Intent(context, ModeSettingPage::class.java)
-                        context.startActivity(intent)
-                    }
                 }
             }
         }
