@@ -50,13 +50,13 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/step_option"
+        android:id="@+id/sub_option"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="295dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/button_style"
-        android:text="단계설정"
+        android:text="자막 설정"
         android:textColor="#FFFFFF"
         android:textSize="15sp"
         android:textStyle="bold"

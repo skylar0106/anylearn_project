@@ -88,6 +88,45 @@
     </RelativeLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout6"
+        style="@style/TextWithBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
+
+        <View
+            style="@style/BarView"
+            android:layout_height="30dp"
+            android:layout_marginEnd="16dp"
+            android:background="#BFBFBF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/AccountSettingPageName"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/AccountSettingPageName" />
+
+        <EditText
+            android:id="@+id/AccountSettingPageName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@null"
+            android:ems="10"
+            android:inputType="text"
+            android:text="이름"
+            android:textColor="#BFBFBF"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout3"
         style="@style/TextWithBar"
         android:layout_width="0dp"
@@ -125,19 +164,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/AccountSettingPageNicknameCheckButton"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:background="@drawable/layout_button"
-            android:text="중복 확인"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.73"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -145,10 +171,11 @@
         style="@style/TextWithBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout6">
 
         <View
             style="@style/BarView"
@@ -175,6 +202,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -194,13 +222,58 @@
             android:layout_marginEnd="16dp"
             android:background="#BFBFBF"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/AccountSettingPagePW"
+            app:layout_constraintEnd_toStartOf="@+id/AccountSettingPagePH"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/AccountSettingPagePW" />
+            app:layout_constraintTop_toTopOf="@id/AccountSettingPagePH" />
 
         <EditText
-            android:id="@+id/AccountSettingPagePW"
+            android:id="@+id/AccountSettingPagePH"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@null"
+            android:ems="10"
+            android:inputType="text"
+            android:text="전화번호"
+            android:textColor="#BFBFBF"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout8"
+        style="@style/TextWithBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout5">
+
+        <View
+            style="@style/BarView"
+            android:layout_height="30dp"
+            android:layout_marginEnd="16dp"
+            android:background="#BFBFBF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/AccountSettingPagePWD"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/AccountSettingPagePWD" />
+
+        <Button
+            android:id="@+id/pwdChangeBtn"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="변경"
+            app:layout_constraintStart_toEndOf="@+id/AccountSettingPagePWD"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/AccountSettingPagePWD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -213,44 +286,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout6"
-        style="@style/TextWithBar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout5">
-
-        <View
-            style="@style/BarView"
-            android:layout_height="30dp"
-            android:layout_marginEnd="16dp"
-            android:background="#BFBFBF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/AccountSettingPagePWCheck"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/AccountSettingPagePWCheck" />
-
-        <EditText
-            android:id="@+id/AccountSettingPagePWCheck"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@null"
-            android:ems="10"
-            android:inputType="text"
-            android:text="비밀번호 재입력"
-            android:textColor="#BFBFBF"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -259,7 +295,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout6">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout8">
 
         <Button
             android:id="@+id/accountSettingPageRmove"
@@ -288,5 +324,7 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/accountSettingPageRmove"
             app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

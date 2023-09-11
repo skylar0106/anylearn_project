@@ -19,7 +19,6 @@ import okio.ByteString
 import ddwu.com.mobile.anylearn.MySharedPreferences
 
 
-
 class WithaiLevel : AppCompatActivity() {
 
     lateinit var wlBinding: ActivityWithaiLevelBinding
@@ -45,6 +44,7 @@ class WithaiLevel : AppCompatActivity() {
             startActivity(intent)
         }
 
+        var level = intent.getStringExtra("level")
 
         val mySharedPreferences = MySharedPreferences(this)
         val receivedIntent = intent

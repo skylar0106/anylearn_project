@@ -58,6 +58,8 @@ class SignUp1 : AppCompatActivity() {
                 Toast.makeText(applicationContext, "비밀번호를 입력해주세요", LENGTH_SHORT).show()
             else if(pwdCheck.isEmpty())
                 Toast.makeText(applicationContext, "비밀번호를 한번 더 입력해주세요", LENGTH_SHORT).show()
+            else if(pwd != pwdCheck)
+                Toast.makeText(applicationContext, "입력한 비밀번호가 동일하지 않습니다", LENGTH_SHORT).show()
             else {
                 signUpInfo(birth, phone, name, email, pwd)
                 val intent = Intent(this, SignUp2::class.java)
@@ -79,7 +81,7 @@ class SignUp1 : AppCompatActivity() {
     )
 
     private fun signUpInfo(birth: String, phone: String, name: String, email: String, pwd: String) {
-        val apiService = RetrofitConfig.retrofit.create(SignupApiService::class.java)
+        val apiService = RetrofitConfig(this).retrofit.create(SignupApiService::class.java)
 
         // SignupRequestModel 객체 생성 및 전달
         val requestModel = SignupRequestModel(birth, phone, name, email, pwd)

@@ -1,7 +1,5 @@
 package ddwu.com.mobile.anylearn
 
-import CsrfTokenInterceptor
-import FetchCsrfTokenTask
 import SignInApiService
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -13,14 +11,9 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import ddwu.com.mobile.anylearn.databinding.ActivitySignInBinding
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 class SignIn : AppCompatActivity() {
 
@@ -86,10 +79,6 @@ class SignIn : AppCompatActivity() {
 
     //토큰 모델
     data class YourTokenResponseModel(
-        @SerializedName("token") val token: String,
-        @SerializedName("session_id") val sessionId: String, // sessionId 필드 추가
-        @SerializedName("user_id") val userId: String,
-        @SerializedName("email") val email: String,
         @SerializedName("ok") val ok: String
     )
 
@@ -100,7 +89,7 @@ class SignIn : AppCompatActivity() {
     private fun checkConnection(requestBody1: String, requestBody2: String) {
         val mySharedPreferences = MySharedPreferences(this)
 
-        val apiService = RetrofitConfig.retrofit.create(SignInApiService::class.java)
+        val apiService = RetrofitConfig(this).retrofit.create(SignInApiService::class.java)
 
         // YourTokenRequestModel 객체 생성 및 전달
         val requestModel = YourTokenRequestModel(email = requestBody1, password = requestBody2)
@@ -109,34 +98,32 @@ class SignIn : AppCompatActivity() {
         call.enqueue(object : Callback<YourTokenResponseModel> {
             override fun onResponse(call: Call<YourTokenResponseModel>, response: Response<YourTokenResponseModel>) {
                 if (response.isSuccessful) {
-                    val tokenResponse = response.body()
+                    val Response = response.body()
 
-                    val token = tokenResponse?.token
-                    mySharedPreferences.saveTokenKey(token.toString())
+                    val ok = Response?.ok
 
-                    val sessionId = tokenResponse?.sessionId // sessionId 값을 가져옴
-                    mySharedPreferences.saveSessionId(sessionId.toString()) // Access the session field here
+                    val csrfToken = mySharedPreferences.getCsrfToken() // MySharedPreferences에서 csrfToken 가져오기
+                    val sessionId = mySharedPreferences.getSessionId()
 
-                    val userId = tokenResponse?.userId
-                    val email = tokenResponse?.email
-                    val ok = tokenResponse?.ok
-
-                    if (token != null) {
+                    if (csrfToken != null) {
                         // 여기에서 토큰을 사용할 수 있습니다.
-                        Log.d("Token", "Received token: $token" +
-                                "session_id: $sessionId"+
-                                "user_id: $userId"+"email: $email"+"ok: $ok")
+                        Log.d("Token", "Received token: $csrfToken" +
+                                "session_id: $sessionId"+"ok: $ok")
+
+
+                        Log.d("CsrfToken", "Received token: $csrfToken" +
+                                "ok: $ok")
 
                         // 다음 단계로 진행하거나 필요한 작업을 수행하세요.
                         val intent = Intent(this@SignIn, MainPage::class.java)
                         startActivity(intent)
                     } else {
-                        Log.e("Token", "Token response body is null")
+                        Log.e("CsrfToken", "Token response body is null")
 
                     }
                 } else {
                     Log.e(
-                        "Token",
+                        "CsrfToken",
                         "HTTP token request failed. Error code: ${response.code()}"
                     )
 
@@ -144,7 +131,7 @@ class SignIn : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<YourTokenResponseModel>, t: Throwable) {
-                Log.e("Token", "HTTP token request error: ${t.message}")
+                Log.e("CsrfToken", "HTTP token request error: ${t.message}")
 
             }
         })
