@@ -81,7 +81,7 @@ class SignUp1 : AppCompatActivity() {
     )
 
     private fun signUpInfo(birth: String, phone: String, name: String, email: String, pwd: String) {
-        val apiService = RetrofitConfig.retrofit.create(SignupApiService::class.java)
+        val apiService = RetrofitConfig(this).retrofit.create(SignupApiService::class.java)
 
         // SignupRequestModel 객체 생성 및 전달
         val requestModel = SignupRequestModel(birth, phone, name, email, pwd)

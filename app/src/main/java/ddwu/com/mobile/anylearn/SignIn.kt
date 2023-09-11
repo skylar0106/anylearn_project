@@ -1,7 +1,5 @@
 package ddwu.com.mobile.anylearn
 
-import CsrfTokenInterceptor
-import FetchCsrfTokenTask
 import SignInApiService
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -13,14 +11,9 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import ddwu.com.mobile.anylearn.databinding.ActivitySignInBinding
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 class SignIn : AppCompatActivity() {
 
@@ -96,7 +89,7 @@ class SignIn : AppCompatActivity() {
     private fun checkConnection(requestBody1: String, requestBody2: String) {
         val mySharedPreferences = MySharedPreferences(this)
 
-        val apiService = RetrofitConfig.retrofit.create(SignInApiService::class.java)
+        val apiService = RetrofitConfig(this).retrofit.create(SignInApiService::class.java)
 
         // YourTokenRequestModel 객체 생성 및 전달
         val requestModel = YourTokenRequestModel(email = requestBody1, password = requestBody2)
@@ -105,41 +98,27 @@ class SignIn : AppCompatActivity() {
         call.enqueue(object : Callback<YourTokenResponseModel> {
             override fun onResponse(call: Call<YourTokenResponseModel>, response: Response<YourTokenResponseModel>) {
                 if (response.isSuccessful) {
-                    val tokenResponse = response.body()
+                    val Response = response.body()
 
+                    val ok = Response?.ok
 
+                    val csrfToken = mySharedPreferences.getCsrfToken() // MySharedPreferences에서 csrfToken 가져오기
+                    val sessionId = mySharedPreferences.getSessionId()
 
-                    val ok = tokenResponse?.ok
-
+                    if (csrfToken != null) {
                         // 여기에서 토큰을 사용할 수 있습니다.
-                        Log.d("login", "ok: $ok")
+                        Log.d("CsrfToken", "Received token: $csrfToken" +
+                                "ok: $ok")
+                        // 다음 단계로 진행하거나 필요한 작업을 수행하세요.
+                        val intent = Intent(this@SignIn, MainPage::class.java)
+                        startActivity(intent)
+                    } else {
+                        Log.e("CsrfToken", "Token response body is null")
 
-
-                    val headers = response.headers()
-
-                    // "Set-Cookie" 헤더에서 csrftoken 쿠키를 추출
-                    val cookies = headers.values("Set-Cookie")
-                    for (cookie in cookies) {
-                        if (cookie.contains("csrftoken")) {
-                            val csrfToken = extractCsrfToken(cookie)
-                            // 추출한 csrfToken을 사용
-                            Log.d("csrfToken", "Received token: $csrfToken")
-
-                            // 다음 단계로 진행하거나 필요한 작업을 수행하세요.
-                            mySharedPreferences.saveTokenKey(csrfToken.toString())
-
-                            val intent = Intent(this@SignIn, MainPage::class.java)
-                            startActivity(intent)
-                        }
-                        if (cookie.contains("session_id")) {
-                            val sessionId = extractSessionId(cookie)
-                            Log.d("sessionId", "Received session: $csrfToken")
-                            mySharedPreferences.saveSessionId(sessionId.toString()) // Access the session field here
-                        }
                     }
                 } else {
                     Log.e(
-                        "Token",
+                        "CsrfToken",
                         "HTTP token request failed. Error code: ${response.code()}"
                     )
 
@@ -147,34 +126,10 @@ class SignIn : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<YourTokenResponseModel>, t: Throwable) {
-                Log.e("Token", "HTTP token request error: ${t.message}")
+                Log.e("CsrfToken", "HTTP token request error: ${t.message}")
 
             }
         })
-    }
-    fun extractCsrfToken(cookie: String): String? {
-        val tokenStartIndex = cookie.indexOf("csrftoken=")
-        if (tokenStartIndex == -1) {
-            return null
-        }
-        val tokenEndIndex = cookie.indexOf(";", tokenStartIndex)
-        return if (tokenEndIndex == -1) {
-            cookie.substring(tokenStartIndex + 10)
-        } else {
-            cookie.substring(tokenStartIndex + 10, tokenEndIndex)
-        }
-    }
-    fun extractSessionId(cookie: String): String? {
-        val sessionIdStartIndex = cookie.indexOf("session_id=")
-        if (sessionIdStartIndex == -1) {
-            return null
-        }
-        val sessionIdEndIndex = cookie.indexOf(";", sessionIdStartIndex)
-        return if (sessionIdEndIndex == -1) {
-            cookie.substring(sessionIdStartIndex + 11)
-        } else {
-            cookie.substring(sessionIdStartIndex + 11, sessionIdEndIndex)
-        }
     }
 
 }

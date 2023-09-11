@@ -30,6 +30,12 @@ class WithaiSelect : AppCompatActivity() {
             startActivity(intent)
         }
 
+        wsBinding.park.setOnClickListener {
+            val notificationHelper = NotificationHelper()
+            notificationHelper.createNotificationChannel()
+            notificationHelper.showNotification()
+        }
+
         wsBinding.subjectOkBtn.setOnClickListener {
             val level = intent.getIntExtra("level", 1)
             val situation = wsBinding.editSubject.text.toString()
@@ -48,7 +54,7 @@ class WithaiSelect : AppCompatActivity() {
 
     }
     data class SelectResponseModel(
-        @SerializedName("id") val id: Int,
+        @SerializedName("id") val id: Int
 //        @SerializedName("level") val level: Int,
 //        @SerializedName("situation") val situation: String,
 //        @SerializedName("situation_en") val situationEn: String,
@@ -61,20 +67,23 @@ class WithaiSelect : AppCompatActivity() {
         @SerializedName("level") val level: Int,
         @SerializedName("situation") val situation: String,
         @SerializedName("my_role") val my_role: String,
-        @SerializedName("gpt_role") val gpt_role: String,
+        @SerializedName("gpt_role") val gpt_role: String
     )
     private fun aiSelectInfo(level: Int, situation: String, myRole:String, gptRole: String){
         val mySharedPreferences = MySharedPreferences(this)
 
-        val apiService = RetrofitConfig.retrofit.create(AiSelectApiService::class.java)
-        val requestModel = SelectRequestModel(level, situation, myRole, gptRole)
-        val csrfToken = mySharedPreferences.getTokenKey()
+        val apiService = RetrofitConfig(this).retrofit.create(AiSelectApiService::class.java)
+        val requestModel = SelectRequestModel(level= level, situation = situation, my_role = myRole, gpt_role = gptRole)
+        val csrfToken = mySharedPreferences.getCsrfToken()
         val call: Call<SelectResponseModel> = apiService.postSubject("Bearer $csrfToken", requestModel)
 
         call.enqueue(object : Callback<SelectResponseModel> {
             override fun onResponse(call: Call<SelectResponseModel>, response: Response<SelectResponseModel>) {
                 val responseBody = response.body()
                 val id = responseBody?.id
+//                if (id != null) {
+//                    mySharedPreferences.saveRoomId(id.toInt())
+//                }
 
                 if (response.isSuccessful) {
                     Log.e("WithaiSelect", "성공!")

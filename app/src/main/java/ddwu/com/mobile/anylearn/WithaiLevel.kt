@@ -19,7 +19,6 @@ import okio.ByteString
 import ddwu.com.mobile.anylearn.MySharedPreferences
 
 
-
 class WithaiLevel : AppCompatActivity() {
 
     lateinit var wlBinding: ActivityWithaiLevelBinding
@@ -45,6 +44,7 @@ class WithaiLevel : AppCompatActivity() {
             startActivity(intent)
         }
 
+        var level = intent.getStringExtra("level")
 
         val mySharedPreferences = MySharedPreferences(this)
         val receivedIntent = intent
@@ -53,7 +53,7 @@ class WithaiLevel : AppCompatActivity() {
         val request: Request = Request.Builder()
             .url("ws://34.81.3.83:8000/ws/chats/$roomId/")
             //.addHeader("Connection", "close")
-            .addHeader("Cookie", mySharedPreferences.getSessionId().toString()) // 쿠키 추가
+            .addHeader("Cookie", "sessionid="+mySharedPreferences.getSessionId().toString()) // 쿠키 추가
             .build()
         val webSocketListener: WebSocketListener = MyWebSocketListener()
 
