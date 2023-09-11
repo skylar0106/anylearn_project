@@ -124,6 +124,7 @@ class SignIn : AppCompatActivity() {
                     if (token != null) {
                         // 여기에서 토큰을 사용할 수 있습니다.
                         Log.d("Token", "Received token: $token" +
+                                "session_id: $sessionId"+
                                 "user_id: $userId"+"email: $email"+"ok: $ok")
 
                         // 다음 단계로 진행하거나 필요한 작업을 수행하세요.

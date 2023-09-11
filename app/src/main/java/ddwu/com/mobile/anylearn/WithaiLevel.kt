@@ -53,7 +53,7 @@ class WithaiLevel : AppCompatActivity() {
         val request: Request = Request.Builder()
             .url("ws://34.81.3.83:8000/ws/chats/$roomId/")
             //.addHeader("Connection", "close")
-            .addHeader("Cookie", mySharedPreferences.getSessionId().toString()) // 쿠키 추가
+            .addHeader("Cookie", "sessionid="+mySharedPreferences.getSessionId().toString()) // 쿠키 추가
             .build()
         val webSocketListener: WebSocketListener = MyWebSocketListener()
 

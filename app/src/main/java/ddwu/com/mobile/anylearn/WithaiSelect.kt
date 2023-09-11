@@ -19,12 +19,6 @@ class WithaiSelect : AppCompatActivity() {
         wsBinding = ActivityWithaiSelectBinding.inflate(layoutInflater)
         setContentView(wsBinding.root)
 
-//        val level = intent.getIntExtra("level", 1)
-//        val situation = wsBinding.editSubject.text.toString()
-//        val myRole = wsBinding.userRoleEdit.text.toString()
-//        val gptRole = wsBinding.aiRoleEdit.text.toString()
-
-
         wsBinding.school.setOnClickListener {
             val intent = Intent(this, WithaiLevel::class.java)
             startActivity(intent)
@@ -91,11 +85,9 @@ class WithaiSelect : AppCompatActivity() {
                     Log.e("WithaiSelectResponse", "id: $id"+"token: $authToken")
                 }
             }
-
             override fun onFailure(call: Call<SelectResponseModel>, t: Throwable) {
                 Log.e("Signup", "HTTP signup request error: ${t.message}")
             }
         })
-
     }
 }
