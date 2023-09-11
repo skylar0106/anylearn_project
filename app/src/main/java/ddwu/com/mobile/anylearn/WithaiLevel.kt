@@ -17,7 +17,6 @@ import android.util.Log
 import ddwu.com.mobile.anylearn.databinding.ActivityWithaiLevelBinding
 import okio.ByteString
 
-
 class WithaiLevel : AppCompatActivity() {
 
     lateinit var wlBinding: ActivityWithaiLevelBinding
@@ -41,11 +40,12 @@ class WithaiLevel : AppCompatActivity() {
             startActivity(intent)
         }
 
+        var level = intent.getStringExtra("level")
 
         val request: Request = Request.Builder()
             .url("ws://34.81.3.83:8000/ws/chats/2/")
             .addHeader("Connection", "close")
-            .addHeader("Cookie", "sessionid=dns1cinctph2xews0003x7ubbj41znyc") // 쿠키 추가
+            .addHeader("Cookie", "sessionid="+MySingleton.sessionId) // 쿠키 추가
             .build()
         val webSocketListener: WebSocketListener = MyWebSocketListener()
 

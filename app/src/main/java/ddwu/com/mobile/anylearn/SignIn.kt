@@ -21,6 +21,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
+object MySingleton {
+    var sessionId: String = ""
+}
 class SignIn : AppCompatActivity() {
 
     lateinit var siBinding: ActivitySignInBinding
@@ -87,8 +90,8 @@ class SignIn : AppCompatActivity() {
 
     //토큰 모델
     data class YourTokenResponseModel(
-        @SerializedName("token") val token: String // 서버 응답에서 토큰 필드에 맞게 조정
-    )
+        @SerializedName("token") val token: String,
+        @SerializedName("session_id") val session_id: String)
 
     data class YourTokenRequestModel(
         @SerializedName("email") val email: String,
@@ -118,6 +121,12 @@ class SignIn : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val tokenResponse = response.body()
                     val token = tokenResponse?.token
+                    val sessionId = tokenResponse?.session_id
+
+                    if (sessionId != null) {
+                        MySingleton.sessionId = sessionId
+                    }
+
                     if (token != null) {
                         // 여기에서 토큰을 사용할 수 있습니다.
                         Log.d("Token", "Received token: $tokenResponse")

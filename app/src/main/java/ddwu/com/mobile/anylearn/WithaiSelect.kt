@@ -21,8 +21,15 @@ class WithaiSelect : AppCompatActivity() {
             startActivity(intent)
         }
 
+        wsBinding.park.setOnClickListener {
+            val notificationHelper = NotificationHelper()
+            notificationHelper.createNotificationChannel()
+            notificationHelper.showNotification()
+        }
+
         wsBinding.subjectOkBtn.setOnClickListener {
             val intent = Intent(this, WithaiLevel::class.java)
+            intent.putExtra("level", intent.getStringExtra("level"))
             startActivity(intent)
         }
     }
