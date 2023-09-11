@@ -18,4 +18,6 @@ object RetrofitConfig {
                 .build()
         )
         .build()
+
+    val webSocketClient: OkHttpClient = OkHttpClient.Builder().build()
 }

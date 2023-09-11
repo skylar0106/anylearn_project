@@ -16,18 +16,22 @@ import android.os.Build
 import android.util.Log
 import ddwu.com.mobile.anylearn.databinding.ActivityWithaiLevelBinding
 import okio.ByteString
+import ddwu.com.mobile.anylearn.MySharedPreferences
+
 
 
 class WithaiLevel : AppCompatActivity() {
 
     lateinit var wlBinding: ActivityWithaiLevelBinding
     lateinit var client: OkHttpClient
+    private lateinit var webSocket: WebSocket
     private lateinit var speechRecognizer: SpeechRecognizer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         wlBinding = ActivityWithaiLevelBinding.inflate(layoutInflater)
         setContentView(wlBinding.root)
+
 
         client = OkHttpClient()
 
@@ -42,15 +46,21 @@ class WithaiLevel : AppCompatActivity() {
         }
 
 
+        val mySharedPreferences = MySharedPreferences(this)
+        val receivedIntent = intent
+        val roomId = receivedIntent.getIntExtra("roomId", 0)
+
         val request: Request = Request.Builder()
-            .url("ws://34.81.3.83:8000/ws/chats/2/")
-            .addHeader("Connection", "close")
-            .addHeader("Cookie", "sessionid=dns1cinctph2xews0003x7ubbj41znyc") // 쿠키 추가
+            .url("ws://34.81.3.83:8000/ws/chats/$roomId/")
+            //.addHeader("Connection", "close")
+            .addHeader("Cookie", mySharedPreferences.getSessionId().toString()) // 쿠키 추가
             .build()
         val webSocketListener: WebSocketListener = MyWebSocketListener()
 
-        client.newWebSocket(request, webSocketListener)
-        client.dispatcher.executorService.shutdown()
+        webSocket = client.newWebSocket(request, MyWebSocketListener())
+        val message = "Hello, WebSocket!" // 보낼 메시지 내용
+        webSocket.send(message)
+        //client.dispatcher.executorService.shutdown()
 
 
         // 권한 설정

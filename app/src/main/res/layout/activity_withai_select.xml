@@ -68,12 +68,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         android:ems="10"
-        android:maxLength="10"
         android:gravity="center_vertical"
         android:inputType="textPersonName"
+        android:maxLength="10"
         android:paddingTop="0dp"
         android:paddingEnd="0dp"
-        android:text="사장"
         android:textSize="22sp"
         app:layout_constraintStart_toEndOf="@+id/userRoleText"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
@@ -88,7 +87,8 @@
         android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userRoleText" />
+        app:layout_constraintTop_toBottomOf="@+id/userRoleText"
+        android:text="AI 역할: " />
 
     <EditText
         android:id="@+id/aiRoleEdit"
@@ -97,12 +97,11 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
-        android:maxLength="10"
         android:gravity="center_vertical"
         android:inputType="textPersonName"
+        android:maxLength="10"
         android:paddingTop="0dp"
         android:paddingEnd="0dp"
-        android:text="손님"
         android:textSize="22sp"
         app:layout_constraintStart_toEndOf="@+id/userRoleText"
         app:layout_constraintTop_toBottomOf="@+id/userRoleEdit" />

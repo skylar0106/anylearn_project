@@ -37,15 +37,8 @@ class SignIn : AppCompatActivity() {
             val email = siBinding.editEmail.text.toString()
             val password = siBinding.editName.text.toString()
 
-//            val intent = Intent(this@SignIn, FirstSetting::class.java)
-//            startActivity(intent)
 
-            FetchCsrfTokenTask(object : FetchCsrfTokenTask.CsrfTokenListener {
-                override fun onCsrfTokenFetched(csrfToken: String) {
-                    checkConnection(email, password)
-                }
-            }).execute("http://34.81.3.83:8000/")
-
+            checkConnection(email, password)
         }
 
         siBinding.btnJoin.setOnClickListener{
@@ -93,7 +86,11 @@ class SignIn : AppCompatActivity() {
 
     //토큰 모델
     data class YourTokenResponseModel(
-        @SerializedName("token") val token: String // 서버 응답에서 토큰 필드에 맞게 조정
+        @SerializedName("token") val token: String,
+        @SerializedName("session_id") val sessionId: String, // sessionId 필드 추가
+        @SerializedName("user_id") val userId: String,
+        @SerializedName("email") val email: String,
+        @SerializedName("ok") val ok: String
     )
 
     data class YourTokenRequestModel(
@@ -101,6 +98,8 @@ class SignIn : AppCompatActivity() {
         @SerializedName("password") val password: String)
 
     private fun checkConnection(requestBody1: String, requestBody2: String) {
+        val mySharedPreferences = MySharedPreferences(this)
+
         val apiService = RetrofitConfig.retrofit.create(SignInApiService::class.java)
 
         // YourTokenRequestModel 객체 생성 및 전달
@@ -111,30 +110,41 @@ class SignIn : AppCompatActivity() {
             override fun onResponse(call: Call<YourTokenResponseModel>, response: Response<YourTokenResponseModel>) {
                 if (response.isSuccessful) {
                     val tokenResponse = response.body()
+
                     val token = tokenResponse?.token
+                    mySharedPreferences.saveTokenKey(token.toString())
+
+                    val sessionId = tokenResponse?.sessionId // sessionId 값을 가져옴
+                    mySharedPreferences.saveSessionId(sessionId.toString()) // Access the session field here
+
+                    val userId = tokenResponse?.userId
+                    val email = tokenResponse?.email
+                    val ok = tokenResponse?.ok
+
                     if (token != null) {
                         // 여기에서 토큰을 사용할 수 있습니다.
-                        Log.d("Token", "Received token: $tokenResponse")
+                        Log.d("Token", "Received token: $token" +
+                                "user_id: $userId"+"email: $email"+"ok: $ok")
 
                         // 다음 단계로 진행하거나 필요한 작업을 수행하세요.
                         val intent = Intent(this@SignIn, MainPage::class.java)
                         startActivity(intent)
                     } else {
                         Log.e("Token", "Token response body is null")
-                        siBinding.memberCheck.alpha = 1F
+
                     }
                 } else {
                     Log.e(
                         "Token",
                         "HTTP token request failed. Error code: ${response.code()}"
                     )
-                    siBinding.memberCheck.alpha = 1F
+
                 }
             }
 
             override fun onFailure(call: Call<YourTokenResponseModel>, t: Throwable) {
                 Log.e("Token", "HTTP token request error: ${t.message}")
-                siBinding.memberCheck.alpha = 1F
+
             }
         })
     }

@@ -28,6 +28,7 @@ class MainPageAdapter (private val menuItems: List<MenuItem>, private val contex
 
     override fun onBindViewHolder(holder: MainPageViewHolder, position: Int) {
         val currentItem = menuItems[position]
+        var level = 1
 
         holder.titleTextView.text = currentItem.title
         holder.descriptionTextView.text = currentItem.description
@@ -55,14 +56,17 @@ class MainPageAdapter (private val menuItems: List<MenuItem>, private val contex
                                     0 -> {
                                         // 단계 1 선택 시 처리
                                         holder.button1.text = "단계 설정 ①"
+                                        level = 1
                                     }
                                     1 -> {
                                         // 단계 2 선택 시 처리
                                         holder.button1.text = "단계 설정 ②"
+                                        level = 2
                                     }
                                     2 -> {
                                         // 단계 3 선택 시 처리
                                         holder.button1.text = "단계 설정 ③"
+                                        level = 3
                                     }
                                 }
                             }
@@ -88,6 +92,7 @@ class MainPageAdapter (private val menuItems: List<MenuItem>, private val contex
             when (currentItem.button2Text) {
                 "시작하기" -> {
                     val intent = Intent(context, WithaiSelect::class.java)
+                    intent.putExtra("level", level)
                     context.startActivity(intent)
                 }
                 "확인하기" -> {
