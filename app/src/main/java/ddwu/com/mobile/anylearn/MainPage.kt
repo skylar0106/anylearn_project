@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import ddwu.com.mobile.anylearn.R
 
 class MainPage : AppCompatActivity() {
+
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

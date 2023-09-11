@@ -20,7 +20,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "KAKAO_NATIVE_API_KEY", properties.getProperty("kakao_native_app_key"))
-
     }
 
     buildTypes {

@@ -50,18 +50,74 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
+        android:id="@+id/userRoleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="26dp"
+        android:text="내 역할: "
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+
+    <EditText
+        android:id="@+id/userRoleEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:gravity="center_vertical"
+        android:inputType="textPersonName"
+        android:maxLength="10"
+        android:paddingTop="0dp"
+        android:paddingEnd="0dp"
+        android:textSize="22sp"
+        app:layout_constraintStart_toEndOf="@+id/userRoleText"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2" />
+
+    <TextView
+        android:id="@+id/aiRoleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:maxLength="10"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userRoleText"
+        android:text="AI 역할: " />
+
+    <EditText
+        android:id="@+id/aiRoleEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:gravity="center_vertical"
+        android:inputType="textPersonName"
+        android:maxLength="10"
+        android:paddingTop="0dp"
+        android:paddingEnd="0dp"
+        android:textSize="22sp"
+        app:layout_constraintStart_toEndOf="@+id/userRoleText"
+        app:layout_constraintTop_toBottomOf="@+id/userRoleEdit" />
+
+    <TextView
         android:id="@+id/subject_input"
-        android:layout_width="350dp"
-        android:layout_height="153dp"
-        android:layout_marginTop="148dp"
+        android:layout_width="351dp"
+        android:layout_height="131dp"
+        android:layout_marginTop="192dp"
         android:background="@drawable/base_style"
         android:gravity="center_horizontal"
-        android:paddingTop="29dp"
+        android:paddingTop="20dp"
         android:text="주제 입력하기"
         android:textColor="#FFFFFF"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -69,13 +125,14 @@
         android:id="@+id/edit_subject"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="230dp"
+        android:layout_marginTop="260dp"
         android:backgroundTint="#FFFFFF"
         android:ems="10"
         android:inputType="textPersonName"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -90,8 +147,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/textView7"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subject_input" />
+        app:layout_constraintTop_toBottomOf="@+id/subject_input"
+        app:layout_constraintVertical_bias="0.357" />
 
     <TextView
         android:id="@+id/textView7"

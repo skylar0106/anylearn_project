@@ -118,6 +118,7 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/edit_style"
             android:ems="10"
+            android:enabled="false"
             android:inputType="date"
             android:paddingLeft="10dp"
             android:paddingTop="5dp"
