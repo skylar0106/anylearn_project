@@ -8,7 +8,6 @@ interface AiSelectApiService {
     @POST("api/v1/chats/")
 
     fun postSubject(
-//        @Header("Authorization") authorization: String, // Authorization 헤더 추가
         @Header("X-Csrftoken") csrfToken: String,
         @Header("Cookie") cookieToken: String,
         @Body request: WithaiSelect.SelectRequestModel

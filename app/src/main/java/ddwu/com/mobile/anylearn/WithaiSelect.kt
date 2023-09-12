@@ -75,6 +75,7 @@ class WithaiSelect : AppCompatActivity() {
         val sessionId = mySharedPreferences.getSessionId()
         val call: Call<SelectResponseModel> = apiService.postSubject( "$csrfToken","csrftoken=$cookieToken; sessionid=$sessionId", requestModel)
 
+
         call.enqueue(object : Callback<SelectResponseModel> {
             override fun onResponse(call: Call<SelectResponseModel>, response: Response<SelectResponseModel>) {
                 val responseBody = response.body()
@@ -88,12 +89,15 @@ class WithaiSelect : AppCompatActivity() {
                     startActivity(intent)
                     // 서버로부터 성공적인 응답을 받았을 때 수행할 작업
                 } else {
+
                     Log.e("WithaiSelect", "HTTP signup request failed. Error code: ${response.code()}")
                     Log.e("WithaiSelectResponse", "id: $id"+" token: $csrfToken"+" cookieToken: $cookieToken"+" sessionId: $sessionId")
+
                 }
             }
             override fun onFailure(call: Call<SelectResponseModel>, t: Throwable) {
-                Log.e("Select", "HTTP Select request error: ${t.message}")
+                Log.e("Signup", "HTTP withaiselect request error: ${t.message}")
+
             }
         })
     }
