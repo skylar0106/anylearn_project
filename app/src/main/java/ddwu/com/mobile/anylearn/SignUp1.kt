@@ -69,43 +69,57 @@ class SignUp1 : AppCompatActivity() {
         }
     }
 
-    data class SignupResponseModel(
-        @SerializedName("id") val id: String
-    )
+
     data class SignupRequestModel(
         @SerializedName("username") val birth: String,
         @SerializedName("phonenumber") val phone: String,
-        @SerializedName("nickname") val name: String,
         @SerializedName("email") val email: String,
-        @SerializedName("password") val pwd: String
+        @SerializedName("password") val pwd: String,
+        @SerializedName("birth") val name: String
     )
 
     private fun signUpInfo(birth: String, phone: String, name: String, email: String, pwd: String) {
         val apiService = RetrofitConfig(this).retrofit.create(SignupApiService::class.java)
 
         // SignupRequestModel 객체 생성 및 전달
-        val requestModel = SignupRequestModel(birth, phone, name, email, pwd)
-        val call: Call<SignupResponseModel> = apiService.signup(requestModel)
+        val requestModel = SignupRequestModel(name, phone, email, pwd, birth)
+        val call: Call<Void> = apiService.signup(requestModel)
 
-        call.enqueue(object : Callback<SignupResponseModel> {
-            override fun onResponse(call: Call<SignupResponseModel>, response: Response<SignupResponseModel>) {
+        call.enqueue(object : Callback<Void> {
+            val mySharedPreferences = MySharedPreferences(this@SignUp1)
+
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     val responseData = response.body()
-                    // 서버로부터 받은 응답 데이터 처리
-                    if (responseData != null) {
-                        // 처리할 작업 수행
+
+                    val csrfToken =
+                        response.headers()["X-Csrftoken"].toString() // 헤더에서 CSRF 토큰 가져오기
+                    val sessionId = response.headers()["Session-ID"].toString() // 헤더에서 세션 아이디 가져오기
+                    mySharedPreferences.saveCsrfToken(csrfToken)
+                    mySharedPreferences.saveSessionId(sessionId)
+
+
+                    if (csrfToken != null) {
+                        // 여기에서 토큰을 사용할 수 있습니다.
+                        Log.d(
+                            "Token", "Received token: $csrfToken" +
+                                    "session_id: $sessionId"
+                        )
+
+
+                        Log.d(
+                            "CsrfToken", "Received token: $csrfToken"
+                        )
+
+                        // 다음 단계로 진행하거나 필요한 작업을 수행하세요.
                     } else {
-                        Log.e("Signup", "Response body is null")
+                        Log.e("CsrfToken", "Token response body is null")
                     }
-                } else {
-                    Log.e(
-                        "Signup",
-                        "HTTP signup request failed. Error code: ${response.code()}"
-                    )
                 }
             }
 
-            override fun onFailure(call: Call<SignupResponseModel>, t: Throwable) {
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
                 Log.e("Signup", "HTTP signup request error: ${t.message}")
             }
         })

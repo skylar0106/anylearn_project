@@ -58,8 +58,8 @@ class WithaiLevel : AppCompatActivity() {
         val webSocketListener: WebSocketListener = MyWebSocketListener()
 
         webSocket = client.newWebSocket(request, MyWebSocketListener())
-        val message = "Hello, WebSocket!" // 보낼 메시지 내용
-        webSocket.send(message)
+        //val message = "Hello, WebSocket!" // 보낼 메시지 내용
+        //webSocket.send(message)
         //client.dispatcher.executorService.shutdown()
 
 
@@ -136,7 +136,14 @@ class WithaiLevel : AppCompatActivity() {
         override fun onResults(results: Bundle) {
             // 말을 하면 ArrayList에 단어를 넣고 textView에 단어를 이어줌
             val matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-            for (i in matches!!.indices) wlBinding.editRecord.setText(matches[i])
+
+            // matches 배열을 하나의 문자열로 결합
+            val resultString = matches?.joinToString(" ") // 여기서 " "은 단어 사이에 넣을 공백입니다.
+
+            // 결과를 TextView에 설정
+            wlBinding.editRecord.setText(resultString)
+            webSocket.send(resultString.toString())
+
         }
         // 부분 인식 결과를 사용할 수 있을 때 호출
         override fun onPartialResults(partialResults: Bundle) {}

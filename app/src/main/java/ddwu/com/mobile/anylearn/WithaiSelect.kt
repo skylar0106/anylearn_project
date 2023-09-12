@@ -1,5 +1,6 @@
 package ddwu.com.mobile.anylearn
 
+import HeaderInterceptor
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -66,18 +67,18 @@ class WithaiSelect : AppCompatActivity() {
     private fun aiSelectInfo(level: Int, situation: String, myRole:String, gptRole: String){
         val mySharedPreferences = MySharedPreferences(this)
 
+
         val apiService = RetrofitConfig(this).retrofit.create(AiSelectApiService::class.java)
         val requestModel = SelectRequestModel(level= level, situation = situation, my_role = myRole, gpt_role = gptRole)
         val csrfToken = mySharedPreferences.getCsrfToken()
-        val call: Call<SelectResponseModel> = apiService.postSubject("Bearer $csrfToken", requestModel)
+        val cookieToken = mySharedPreferences.getCookieToken()
+        val sessionId = mySharedPreferences.getSessionId()
+        val call: Call<SelectResponseModel> = apiService.postSubject( "$csrfToken","csrftoken=$cookieToken; sessionid=$sessionId", requestModel)
 
         call.enqueue(object : Callback<SelectResponseModel> {
             override fun onResponse(call: Call<SelectResponseModel>, response: Response<SelectResponseModel>) {
                 val responseBody = response.body()
                 val id = responseBody?.id
-//                if (id != null) {
-//                    mySharedPreferences.saveRoomId(id.toInt())
-//                }
 
                 if (response.isSuccessful) {
                     Log.e("WithaiSelect", "성공!")
@@ -88,11 +89,11 @@ class WithaiSelect : AppCompatActivity() {
                     // 서버로부터 성공적인 응답을 받았을 때 수행할 작업
                 } else {
                     Log.e("WithaiSelect", "HTTP signup request failed. Error code: ${response.code()}")
-                    Log.e("WithaiSelectResponse", "id: $id"+"token: $csrfToken")
+                    Log.e("WithaiSelectResponse", "id: $id"+" token: $csrfToken"+" cookieToken: $cookieToken"+" sessionId: $sessionId")
                 }
             }
             override fun onFailure(call: Call<SelectResponseModel>, t: Throwable) {
-                Log.e("Signup", "HTTP signup request error: ${t.message}")
+                Log.e("Select", "HTTP Select request error: ${t.message}")
             }
         })
     }

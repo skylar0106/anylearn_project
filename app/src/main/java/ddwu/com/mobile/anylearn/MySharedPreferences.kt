@@ -10,6 +10,7 @@ class MySharedPreferences(context: Context) {
 
     private val SESSION_ID_KEY = "session_id"
     private val CSRF_TOKEN_KEY = "csrf_token"
+    private val COOKIE_TOKEN = "cookie_token"
 
     // 세션 ID를 저장하는 함수
     fun saveSessionId(sessionId: String) {
@@ -31,5 +32,16 @@ class MySharedPreferences(context: Context) {
     // csrfToken을 가져오는 함수
     fun getCsrfToken(): String? {
         return sharedPreferences.getString(CSRF_TOKEN_KEY, null)
+    }
+
+    // cookieToken을 저장하는 함수
+    fun saveCookieToken(cookieToken: String) {
+        editor.putString(COOKIE_TOKEN, cookieToken)
+        editor.apply()
+    }
+
+    // cookieToken을 가져오는 함수
+    fun getCookieToken(): String? {
+        return sharedPreferences.getString(COOKIE_TOKEN, null)
     }
 }

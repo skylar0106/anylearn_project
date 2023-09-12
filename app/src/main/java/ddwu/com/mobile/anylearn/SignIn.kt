@@ -1,5 +1,6 @@
 package ddwu.com.mobile.anylearn
 
+import HeaderInterceptor
 import SignInApiService
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -89,6 +90,7 @@ class SignIn : AppCompatActivity() {
     private fun checkConnection(requestBody1: String, requestBody2: String) {
         val mySharedPreferences = MySharedPreferences(this)
 
+
         val apiService = RetrofitConfig(this).retrofit.create(SignInApiService::class.java)
 
         // YourTokenRequestModel 객체 생성 및 전달
@@ -102,8 +104,15 @@ class SignIn : AppCompatActivity() {
 
                     val ok = Response?.ok
 
-                    val csrfToken = mySharedPreferences.getCsrfToken() // MySharedPreferences에서 csrfToken 가져오기
-                    val sessionId = mySharedPreferences.getSessionId()
+                    HeaderInterceptor(mySharedPreferences)
+
+                    val csrfToken = response.headers()["X-Csrftoken"].toString() // 헤더에서 CSRF 토큰 가져오기
+                    val sessionId = response.headers()["Session-id"].toString() // 헤더에서 세션 아이디 가져오기
+
+
+
+                    mySharedPreferences.saveCsrfToken(csrfToken)
+                    mySharedPreferences.saveSessionId(sessionId)
 
                     if (csrfToken != null) {
                         // 여기에서 토큰을 사용할 수 있습니다.
