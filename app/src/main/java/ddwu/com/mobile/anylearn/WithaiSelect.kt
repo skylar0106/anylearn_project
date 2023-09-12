@@ -75,7 +75,7 @@ class WithaiSelect : AppCompatActivity() {
         val apiService = RetrofitConfig(this).retrofit.create(AiSelectApiService::class.java)
         val requestModel = SelectRequestModel(level= level, situation = situation, my_role = myRole, gpt_role = gptRole)
         val csrfToken = mySharedPreferences.getCsrfToken()
-        val call: Call<SelectResponseModel> = apiService.postSubject("Bearer $csrfToken", requestModel)
+        val call: Call<SelectResponseModel> = apiService.postSubject("{$csrfToken}", requestModel)
 
         call.enqueue(object : Callback<SelectResponseModel> {
             override fun onResponse(call: Call<SelectResponseModel>, response: Response<SelectResponseModel>) {
@@ -93,13 +93,13 @@ class WithaiSelect : AppCompatActivity() {
                     startActivity(intent)
                     // 서버로부터 성공적인 응답을 받았을 때 수행할 작업
                 } else {
-                    Log.e("WithaiSelect", "HTTP signup request failed. Error code: ${response.code()}")
+                    Log.e("WithaiSelect", "HTTP withaiselect request failed. Error code: ${response.code()}")
                     Log.e("WithaiSelectResponse", "id: $id"+"token: $csrfToken")
                 }
             }
 
             override fun onFailure(call: Call<SelectResponseModel>, t: Throwable) {
-                Log.e("Signup", "HTTP signup request error: ${t.message}")
+                Log.e("Signup", "HTTP withaiselect request error: ${t.message}")
             }
         })
 
