@@ -13,10 +13,14 @@ import androidx.core.content.ContextCompat
 import okhttp3.*
 import android.Manifest
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import ddwu.com.mobile.anylearn.databinding.ActivityWithaiLevelBinding
 import okio.ByteString
 import ddwu.com.mobile.anylearn.MySharedPreferences
+import org.json.JSONException
+import org.json.JSONObject
 
 
 class WithaiLevel : AppCompatActivity() {
@@ -142,7 +146,14 @@ class WithaiLevel : AppCompatActivity() {
 
             // 결과를 TextView에 설정
             wlBinding.editRecord.setText(resultString)
-            webSocket.send(resultString.toString())
+
+            // JSON 객체 생성
+            val json = JSONObject()
+            json.put("type", "user-message")
+            json.put("message", resultString)
+
+            // JSON 데이터를 문자열로 변환하여 서버로 전송
+            webSocket.send(json.toString())
 
         }
         // 부분 인식 결과를 사용할 수 있을 때 호출
@@ -164,7 +175,26 @@ class WithaiLevel : AppCompatActivity() {
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
-            // 서버로부터 텍스트 메시지를 수신했을 때 호출되는 코드
+
+            // 서버로부터 받은 JSON 형식의 데이터 파싱
+            try {
+                val jsonObject = JSONObject(text)
+                val type = jsonObject.optString("type")
+                val message = jsonObject.optString("message")
+
+
+                // 받은 데이터를 UI에 표시하거나 필요한 작업 수행
+                val handler = Handler(Looper.getMainLooper())
+
+                // 백그라운드 스레드에서 UI 업데이트 예약
+                handler.post {
+                    // UI 업데이트 코드 작성
+                    wlBinding.englishSubtitle.text = message
+                }
+
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
         }
 
         override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
