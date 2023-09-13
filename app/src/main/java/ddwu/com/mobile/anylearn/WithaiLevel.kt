@@ -39,6 +39,12 @@ class WithaiLevel : AppCompatActivity() {
         client = OkHttpClient()
 
         wlBinding.levelFinishBtn.setOnClickListener {
+            val endJson = JSONObject()
+            endJson.put("type", " end-conversation")
+            endJson.put("message", "end")
+            webSocket.send(endJson.toString())
+
+
             val intent = Intent(this, ScriptSaveChoice::class.java)
             startActivity(intent)
         }

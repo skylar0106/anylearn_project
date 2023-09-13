@@ -44,23 +44,23 @@ class SignUp2 : AppCompatActivity() {
 
     private fun signUp2Info(nickname: String) {
         val apiService = RetrofitConfig(this).retrofit.create(Signup2ApiService::class.java)
-
+        val mySharedPreferences = MySharedPreferences(this@SignUp2)
+        val csrfToken = mySharedPreferences.getCsrfToken()
+        val sessionId = mySharedPreferences.getSessionId()
+        val cookieToken = mySharedPreferences.getCookieToken()
         // SignupRequestModel 객체 생성 및 전달
         val requestModel = Signup2RequestModel(nickname)
-        val call: Call<SignUp2ResponseModel> = apiService.signup2(requestModel)
+        val call: Call<SignUp2ResponseModel> = apiService.signup2("csrftoken=$cookieToken; sessionid=$sessionId","$csrfToken",requestModel)
 
         call.enqueue(object : Callback<SignUp2ResponseModel> {
-            val mySharedPreferences = MySharedPreferences(this@SignUp2)
+
 
             override fun onResponse(call: Call<SignUp2ResponseModel>, response: Response<SignUp2ResponseModel>) {
                 if (response.isSuccessful) {
                     val responseData = response.body()
 
-                    val csrfToken =
-                        response.headers()["X-CSRFToken"].toString() // 헤더에서 CSRF 토큰 가져오기
-                    val sessionId = response.headers()["Session-ID"].toString() // 헤더에서 세션 아이디 가져오기
-                    mySharedPreferences.saveCsrfToken(csrfToken)
-                    mySharedPreferences.saveSessionId(sessionId)
+
+
 
 
                     if (csrfToken != null) {
@@ -72,10 +72,6 @@ class SignUp2 : AppCompatActivity() {
                         val intent = Intent(this@SignUp2, SignIn::class.java)
                         startActivity(intent)
 
-                        Log.d(
-                            "CsrfToken", "Received token: $csrfToken"
-                        )
-
                         // 다음 단계로 진행하거나 필요한 작업을 수행하세요.
                     } else {
                         Log.e("CsrfToken", "Token response body is null")
@@ -85,7 +81,7 @@ class SignUp2 : AppCompatActivity() {
 
 
             override fun onFailure(call: Call<SignUp2ResponseModel>, t: Throwable) {
-                Log.e("Signup", "HTTP signup request error: ${t.message}")
+                Log.e("Signup", "HTTP signup2 request error: ${t.message}")
             }
         })
     }

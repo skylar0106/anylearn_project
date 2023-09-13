@@ -1,5 +1,6 @@
 package ddwu.com.mobile.anylearn
 
+import HeaderInterceptor
 import SignupApiService
 import android.app.DatePickerDialog
 import android.content.Intent
@@ -14,6 +15,7 @@ import ddwu.com.mobile.anylearn.databinding.ActivitySignUp1Binding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.util.*
 
 class SignUp1 : AppCompatActivity() {
@@ -28,15 +30,15 @@ class SignUp1 : AppCompatActivity() {
         suBinding1.btnBirth.setOnClickListener {
             val cal = Calendar.getInstance()
             val data = DatePickerDialog.OnDateSetListener { view, year, month, day ->
-                val selectedDate = "${year}-${month+1}-${day}"
+                val selectedMonth = if (month + 1 < 10) "0${month + 1}" else (month + 1).toString()
+                val selectedDay = if (day < 10) "0$day" else day.toString()
+                val selectedDate = "$year$selectedMonth$selectedDay"
                 suBinding1.editBirth.setText(selectedDate)
             }
             DatePickerDialog(this, data, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
         }
 
-        val phone = suBinding1.editPhone.text.toString()
-        val pwd = suBinding1.editPwd2.text.toString()
-        val pwdCheck = suBinding1.editPwdCheck.text.toString()
+
 
         suBinding1.btnStart.setOnClickListener{
             val email = suBinding1.editEmail.text.toString()
@@ -61,7 +63,7 @@ class SignUp1 : AppCompatActivity() {
             else if(pwd != pwdCheck)
                 Toast.makeText(applicationContext, "입력한 비밀번호가 동일하지 않습니다", LENGTH_SHORT).show()
             else {
-                signUpInfo(birth, phone, name, email, pwd)
+                signUpInfo(name, phone, email, pwd, birth)
                 val intent = Intent(this, SignUp2::class.java)
                 startActivity(intent)
             }
@@ -78,7 +80,7 @@ class SignUp1 : AppCompatActivity() {
         @SerializedName("birth") val name: String
     )
 
-    private fun signUpInfo(birth: String, phone: String, name: String, email: String, pwd: String) {
+    private fun signUpInfo(name: String, phone: String, email: String, pwd: String, birth: String) {
         val apiService = RetrofitConfig(this).retrofit.create(SignupApiService::class.java)
 
         // SignupRequestModel 객체 생성 및 전달
@@ -92,8 +94,9 @@ class SignUp1 : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val responseData = response.body()
 
-                    val csrfToken =
-                        response.headers()["X-Csrftoken"].toString() // 헤더에서 CSRF 토큰 가져오기
+                    HeaderInterceptor(mySharedPreferences)
+
+                    val csrfToken = response.headers()["X-Csrftoken"].toString() // 헤더에서 CSRF 토큰 가져오기
                     val sessionId = response.headers()["Session-ID"].toString() // 헤더에서 세션 아이디 가져오기
                     mySharedPreferences.saveCsrfToken(csrfToken)
                     mySharedPreferences.saveSessionId(sessionId)
@@ -104,11 +107,6 @@ class SignUp1 : AppCompatActivity() {
                         Log.d(
                             "Token", "Received token: $csrfToken" +
                                     "session_id: $sessionId"
-                        )
-
-
-                        Log.d(
-                            "CsrfToken", "Received token: $csrfToken"
                         )
 
                         // 다음 단계로 진행하거나 필요한 작업을 수행하세요.
