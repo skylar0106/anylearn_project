@@ -1,26 +1,26 @@
 package ddwu.com.mobile.anylearn
 
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import okhttp3.*
-import android.Manifest
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import ddwu.com.mobile.anylearn.databinding.ActivityWithaiLevelBinding
-import okio.ByteString
-import ddwu.com.mobile.anylearn.MySharedPreferences
+import okhttp3.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.*
 
 
 class WithaiLevel : AppCompatActivity() {
@@ -29,6 +29,7 @@ class WithaiLevel : AppCompatActivity() {
     lateinit var client: OkHttpClient
 //    private lateinit var webSocket: WebSocket
     private lateinit var speechRecognizer: SpeechRecognizer
+    private lateinit var tts : TextToSpeech
 
     // WebSocket 객체를 싱글톤으로 생성
     companion object {
@@ -43,7 +44,6 @@ class WithaiLevel : AppCompatActivity() {
         wlBinding = ActivityWithaiLevelBinding.inflate(layoutInflater)
         setContentView(wlBinding.root)
 
-
         client = OkHttpClient()
 
         wlBinding.levelFinishBtn.setOnClickListener {
@@ -51,7 +51,6 @@ class WithaiLevel : AppCompatActivity() {
             endJson.put("type", " end-conversation")
             endJson.put("message", "end")
             webSocket.send(endJson.toString())
-
 
             val intent = Intent(this, ScriptSaveChoice::class.java)
             startActivity(intent)
@@ -75,11 +74,19 @@ class WithaiLevel : AppCompatActivity() {
             .build()
         val webSocketListener: WebSocketListener = MyWebSocketListener()
 
+        // tts 세팅
+        tts = TextToSpeech(this) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                tts.language = Locale.ENGLISH
+            } else {
+                Log.e("TTS", "TTS 엔진 초기화에 실패했습니다.")
+            }
+        }
+
         webSocket = client.newWebSocket(request, MyWebSocketListener())
         //val message = "Hello, WebSocket!" // 보낼 메시지 내용
         //webSocket.send(message)
         //client.dispatcher.executorService.shutdown()
-
 
         // 권한 설정
         requestPermission()
@@ -88,7 +95,6 @@ class WithaiLevel : AppCompatActivity() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)    // 여분의 키
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")         // 언어 설정
-
 
         // 완전한 침묵이 감지되면 인식을 종료하는 시간 설정 (예: 3초)
         //intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 4000)
@@ -101,8 +107,6 @@ class WithaiLevel : AppCompatActivity() {
             speechRecognizer.startListening(intent)                         // 듣기 시작
         }
     }
-
-
 
     // 권한 설정 메소드
     private fun requestPermission() {
@@ -176,7 +180,6 @@ class WithaiLevel : AppCompatActivity() {
         override fun onEvent(eventType: Int, params: Bundle) {}
     }
 
-
     inner class MyWebSocketListener : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
@@ -194,19 +197,52 @@ class WithaiLevel : AppCompatActivity() {
                 val type = jsonObject.optString("type")
                 val message = jsonObject.optString("message")
 
-
                 // 받은 데이터를 UI에 표시하거나 필요한 작업 수행
                 val handler = Handler(Looper.getMainLooper())
 
                 // 백그라운드 스레드에서 UI 업데이트 예약
                 handler.post {
-                    // UI 업데이트 코드 작성
-                    wlBinding.englishSubtitle.text = message
+                    // 영어 한국어 부분 추출
+                    val (englishText, koreanText) = extractText(message)
+                    Log.d("ai conversation", englishText)
+                    Log.d("ai conversation", koreanText)
+
+                    // 영어 부분이 존재하면 TTS 실행
+                    if (englishText.isNotEmpty()) {
+                        // UI 업데이트 코드 작성
+                        wlBinding.englishSubtitle.text = englishText
+                        speakText(englishText)
+                    }
+
+                    // 한글 부분을 원하는 변수에 저장 (예: koreanVariable)
+                    if (koreanText.isNotEmpty()) {
+                        // UI 업데이트 코드 작성
+                        wlBinding.koreanSubtitle.text = koreanText
+                    }
                 }
 
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
+        }
+
+        // 문자열에서 영어 부분과 한글 부분을 추출하는 메서드
+        private fun extractText(text: String): Pair<String, String> {
+            val startIndex = text.indexOf("(")
+            val endIndex = text.indexOf(")")
+            if (startIndex != -1 && endIndex != -1 && startIndex < endIndex) {
+                val englishText = text.substring(0, startIndex).trim()
+                val koreanText = text.substring(startIndex + 1, endIndex).trim()
+                return Pair(englishText, koreanText)
+            }
+            return Pair(text, "")
+        }
+
+        // TTS 실행하는 메서드
+        private fun speakText(text: String) {
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+            tts.setPitch(1.0f)
+            tts.setSpeechRate(1.0f)
         }
 
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
@@ -218,6 +254,11 @@ class WithaiLevel : AppCompatActivity() {
             Log.d("Socket","Error : " + t.message)
         }
 
+    }
+    override fun onDestroy() {
+        tts.stop()
+        tts.shutdown()
+        super.onDestroy()
     }
 }
 
