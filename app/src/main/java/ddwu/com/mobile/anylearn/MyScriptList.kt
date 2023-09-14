@@ -46,14 +46,14 @@ class MyScriptList : AppCompatActivity() {
         scriptListGet()
 
         //recyclerview
-        val list = ArrayList<ListType>()
-        val adapter = ScriptsListAdapter(list)
+//        val list = ArrayList<ListType>()
+
 
         val layoutManager =  LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
 
         mslBinding.scriptListRecyclerview.layoutManager = layoutManager
-        mslBinding.scriptListRecyclerview.adapter = adapter
+
 
     }
     data class ListType(
@@ -92,11 +92,15 @@ class MyScriptList : AppCompatActivity() {
 
                     if (responseBody != null) {
                         for (responseData in responseBody.orEmpty()) {
-                            scriptTitle = responseData.title.toString()
-                            date = responseData.learningDate.toString()
+                            scriptTitle = responseData.title
+                            date = responseData.learningDate
+                            Log.e("ScriptListGet", "title: $scriptTitle, date: $date")
+
                             scriptList.add(ListType(scriptTitle, date))
 
                             // 필요한 작업 수행
+                            val adapter = ScriptsListAdapter(scriptList)
+                            mslBinding.scriptListRecyclerview.adapter = adapter
                         }
                     }
                 } else {
