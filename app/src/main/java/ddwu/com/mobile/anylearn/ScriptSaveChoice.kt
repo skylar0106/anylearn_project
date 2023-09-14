@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import ddwu.com.mobile.anylearn.databinding.ActivityScriptSaveChoiceBinding
+import org.json.JSONObject
 
 class ScriptSaveChoice : AppCompatActivity() {
 
@@ -15,12 +16,21 @@ class ScriptSaveChoice : AppCompatActivity() {
         sscBinding = ActivityScriptSaveChoiceBinding.inflate(layoutInflater)
         setContentView(sscBinding.root)
 
+        // WithaiLevel 클래스의 WebSocket 객체 얻기
+        val webSocket = WithaiLevel.getWebSocketInstance()
+
         sscBinding.saveBtn.setOnClickListener{
             val intent = Intent(this, ScriptNameInput::class.java)
             startActivity(intent)
         }
 
         sscBinding.noSaveBtn.setOnClickListener{
+            val noSavejJson = JSONObject()
+            noSavejJson.put("type", "notSave")
+            noSavejJson.put("message", "notSave")
+
+            webSocket.send(noSavejJson.toString())
+
             val intent = Intent(this, MainPage::class.java)
             startActivity(intent)
         }

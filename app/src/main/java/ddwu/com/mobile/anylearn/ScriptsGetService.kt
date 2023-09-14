@@ -1,12 +1,13 @@
+import ddwu.com.mobile.anylearn.MyScriptList
+import ddwu.com.mobile.anylearn.WithaiSelect
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface ScriptsGetService {
     @GET("api/v1/scripts/")
-    fun scriptsConnection(): Call<Void>
+    fun scripListGet(
+        @Header("Cookie") cookieToken: String,
+    ): Call<MyScriptList.ScriptListResponseModel>
 }
 
 

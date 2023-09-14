@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.annotations.SerializedName
 import ddwu.com.mobile.anylearn.databinding.ActivityMyScriptListBinding
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -36,40 +37,44 @@ class MyScriptList : AppCompatActivity() {
         }
 
         // checkConnection 함수 호출
-        checkConnection2()
+        scriptListGet()
     }
+    data class ScriptListResponseModel(
+        @SerializedName("ok") val ok: String
+    )
 
-    private fun checkConnection2() {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://34.81.3.83:8000/") // 본인의 디장고 서버 URL을 적는다.
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(
-                OkHttpClient.Builder()
-                    .addInterceptor(HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-                    })
-                    .build()
-            )
-            .build()
+    private fun scriptListGet() {
+        val mySharedPreferences = MySharedPreferences(this)
 
-        val scriptGetService = retrofit.create(ScriptsGetService::class.java)
-        val call: Call<Void> = scriptGetService.scriptsConnection()
+        val apiService = RetrofitConfig(this).retrofit.create(ScriptsGetService::class.java)
 
-        call.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+        val cookieToken = mySharedPreferences.getCookieToken()
+        val sessionId = mySharedPreferences.getSessionId()
+        val call: Call<ScriptListResponseModel> = apiService.scripListGet("csrftoken=$cookieToken; sessionid=$sessionId")
+
+        call.enqueue(object : Callback<ScriptListResponseModel> {
+            override fun onResponse(call: Call<ScriptListResponseModel>, response: Response<ScriptListResponseModel>) {
                 if (response.isSuccessful) {
-                    Log.d("Connection", "HTTP connection successful")
+                    // 성공적인 응답을 받았을 때 수행할 작업
+                    val responseBody = response.body()
+
+                    if (responseBody != null) {
+                        // responseBody를 사용하여 필요한 데이터를 추출하고 변수에 저장할 수 있습니다.
+                        // 예를 들어, responseBody에서 데이터를 추출하여 저장하는 방법은 아래와 같을 수 있습니다.
+                        // val data = responseBody.data
+
+                        // 변수에 데이터를 저장한 후에 원하는 작업을 수행합니다.
+                    }
                 } else {
-                    Log.e(
-                        "Connection",
-                        "HTTP connection failed. Error code: ${response.code()}"
-                    )
+                    Log.e("ScriptListGet", "HTTP signup request failed. Error code: ${response.code()}")
+                    Log.e("ScriptListGet", " cookieToken: $cookieToken" + " sessionId: $sessionId")
                 }
             }
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Log.e("Connection", "HTTP connection error: ${t.message}")
+            override fun onFailure(call: Call<ScriptListResponseModel>, t: Throwable) {
+                Log.e("Signup", "HTTP withaiselect request error: ${t.message}")
             }
         })
     }
+
 }

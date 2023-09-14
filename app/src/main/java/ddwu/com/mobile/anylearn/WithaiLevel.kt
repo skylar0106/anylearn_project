@@ -27,8 +27,16 @@ class WithaiLevel : AppCompatActivity() {
 
     lateinit var wlBinding: ActivityWithaiLevelBinding
     lateinit var client: OkHttpClient
-    private lateinit var webSocket: WebSocket
+//    private lateinit var webSocket: WebSocket
     private lateinit var speechRecognizer: SpeechRecognizer
+
+    // WebSocket 객체를 싱글톤으로 생성
+    companion object {
+        private lateinit var webSocket: WebSocket
+        fun getWebSocketInstance(): WebSocket {
+            return webSocket
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -175,8 +183,6 @@ class WithaiLevel : AppCompatActivity() {
             //webSocket.close(NORMAL_CLOSURE_STATUS, null) //없을 경우 끊임없이 서버와 통신함
             Log.d("Socket","Open")
             val responseBody = response.body?.string()
-            //val jsonObject = JSONObject(responseBody)
-
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
@@ -203,10 +209,6 @@ class WithaiLevel : AppCompatActivity() {
             }
         }
 
-        override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-            super.onMessage(webSocket, bytes)
-        }
-
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosing(webSocket, code, reason)
         }
@@ -216,9 +218,6 @@ class WithaiLevel : AppCompatActivity() {
             Log.d("Socket","Error : " + t.message)
         }
 
-    }
-    companion object {
-        private const val NORMAL_CLOSURE_STATUS = 1000
     }
 }
 
