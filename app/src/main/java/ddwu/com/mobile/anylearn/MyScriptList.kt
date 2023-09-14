@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.annotations.SerializedName
 import ddwu.com.mobile.anylearn.databinding.ActivityMyScriptListBinding
 import okhttp3.OkHttpClient
@@ -19,6 +20,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MyScriptList : AppCompatActivity() {
 
     lateinit var mslBinding : ActivityMyScriptListBinding
+    companion object{
+        lateinit var scriptList: ArrayList<ListType>
+        lateinit var scriptTitle: String
+        lateinit var date: String
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +44,32 @@ class MyScriptList : AppCompatActivity() {
 
         // checkConnection 함수 호출
         scriptListGet()
+
+        //recyclerview
+        val list = ArrayList<ListType>()
+        val adapter = ScriptsListAdapter(list)
+
+        val layoutManager =  LinearLayoutManager(this)
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+
+        mslBinding.scriptListRecyclerview.layoutManager = layoutManager
+        mslBinding.scriptListRecyclerview.adapter = adapter
+
     }
+    data class ListType(
+        val title: String,
+        val date: String
+    )
     data class ScriptListResponseModel(
-        @SerializedName("ok") val ok: String
+        @SerializedName("title") val title: String,
+        @SerializedName("hashtag") val hashtag: List<String>,
+        @SerializedName("contents") val contents: String,
+        @SerializedName("level") val level: String,
+        @SerializedName("learningDate") val learningDate: String,
+        @SerializedName("add_diary") val addDiary: Int,
+        @SerializedName("show_expr") val showExpr: Int,
+        @SerializedName("input_expr") val inputExpr: String,
+        @SerializedName("email") val email: String,
     )
 
     private fun scriptListGet() {
@@ -50,20 +79,25 @@ class MyScriptList : AppCompatActivity() {
 
         val cookieToken = mySharedPreferences.getCookieToken()
         val sessionId = mySharedPreferences.getSessionId()
-        val call: Call<ScriptListResponseModel> = apiService.scripListGet("csrftoken=$cookieToken; sessionid=$sessionId")
+        val call: Call<List<ScriptListResponseModel>> = apiService.scripListGet("csrftoken=$cookieToken; sessionid=$sessionId")
+        scriptList = ArrayList<ListType>()
 
-        call.enqueue(object : Callback<ScriptListResponseModel> {
-            override fun onResponse(call: Call<ScriptListResponseModel>, response: Response<ScriptListResponseModel>) {
+        call.enqueue(object : Callback<List<ScriptListResponseModel>> {
+
+
+            override fun onResponse(call: Call<List<ScriptListResponseModel>>, response: Response<List<ScriptListResponseModel>>) {
                 if (response.isSuccessful) {
                     // 성공적인 응답을 받았을 때 수행할 작업
                     val responseBody = response.body()
 
                     if (responseBody != null) {
-                        // responseBody를 사용하여 필요한 데이터를 추출하고 변수에 저장할 수 있습니다.
-                        // 예를 들어, responseBody에서 데이터를 추출하여 저장하는 방법은 아래와 같을 수 있습니다.
-                        // val data = responseBody.data
+                        for (responseData in responseBody.orEmpty()) {
+                            scriptTitle = responseData.title.toString()
+                            date = responseData.learningDate.toString()
+                            scriptList.add(ListType(scriptTitle, date))
 
-                        // 변수에 데이터를 저장한 후에 원하는 작업을 수행합니다.
+                            // 필요한 작업 수행
+                        }
                     }
                 } else {
                     Log.e("ScriptListGet", "HTTP signup request failed. Error code: ${response.code()}")
@@ -71,7 +105,7 @@ class MyScriptList : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<ScriptListResponseModel>, t: Throwable) {
+            override fun onFailure(call: Call<List<ScriptListResponseModel>>, t: Throwable) {
                 Log.e("Signup", "HTTP withaiselect request error: ${t.message}")
             }
         })
