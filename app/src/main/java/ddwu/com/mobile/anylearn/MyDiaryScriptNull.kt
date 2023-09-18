@@ -11,47 +11,28 @@ import com.google.gson.annotations.SerializedName
 import ddwu.com.mobile.anylearn.R
 import ddwu.com.mobile.anylearn.databinding.ActivityMyDiaryMainBinding
 import ddwu.com.mobile.anylearn.databinding.ActivityMyDiaryScriptBinding
+import ddwu.com.mobile.anylearn.databinding.ActivityMyDiaryScriptNullBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlin.properties.Delegates
 
-class MyDiaryScript : AppCompatActivity() {
-    lateinit var mdsBinding: ActivityMyDiaryScriptBinding
-    lateinit var recyclerView: RecyclerView
+class MyDiaryScriptNull : AppCompatActivity() {
+    lateinit var mdsnBinding: ActivityMyDiaryScriptNullBinding
     var selectedYear by Delegates.notNull<Int>()
     var selectedMonth by Delegates.notNull<Int>()
     var selectedDay by Delegates.notNull<Int>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mdsBinding = ActivityMyDiaryScriptBinding.inflate(layoutInflater)
-        setContentView(mdsBinding.root)
+        mdsnBinding = ActivityMyDiaryScriptNullBinding.inflate(layoutInflater)
+        setContentView(mdsnBinding.root)
 
-        recyclerView = mdsBinding.diaryScriptComment // XML에서 RecyclerView를 가져옴
-
-        // Intent로부터 diaryContents 데이터를 가져옴
-        val diaryContents = intent.getSerializableExtra("diaryContents") as? Array<MyDiaryMain.DiaryContent>
-        val diaryContentsList = ArrayList(diaryContents?.toList())
-
-        // Intent로부터 comment 데이터를 가져옴
-        val comment = intent.getStringExtra("comment")
-
-        if(comment != null)
-            mdsBinding.diaryScriptUsercomment.setText(comment)
-
-        // RecyclerView에 레이아웃 매니저 설정 (수직 스크롤)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
-        // RecyclerView 어댑터 생성 및 설정
-        val adapter = DiaryContentAdapter(diaryContentsList)
-        recyclerView.adapter = adapter
-
-        mdsBinding.diaryScriptHomeBtn.setOnClickListener {
+        mdsnBinding.diaryScriptHomeBtnNull.setOnClickListener {
             val intent = Intent(this, MainPage::class.java)
             startActivity(intent)
         }
 
-        mdsBinding.DiaryScriptSetting.setOnClickListener {
+        mdsnBinding.DiaryScriptNullSetting.setOnClickListener {
             val intent = Intent(this, SettingPage::class.java)
             startActivity(intent)
         }
@@ -61,32 +42,18 @@ class MyDiaryScript : AppCompatActivity() {
         selectedMonth = intent.getIntExtra("selectedMonth", 0)
         selectedDay = intent.getIntExtra("selectedDay", 0)
 
-        mdsBinding.diaryScriptYear.setText("${selectedYear}년")
-        mdsBinding.diaryScriptMonth.setText("${selectedMonth}월")
-        mdsBinding.diaryScriptDay.setText("${selectedDay}일")
+        mdsnBinding.diaryScriptYearNull.setText("${selectedYear}년")
+        mdsnBinding.diaryScriptMonthNull.setText("${selectedMonth}월")
+        mdsnBinding.diaryScriptDayNull.setText("${selectedDay}일")
 
         //이전 누르면 전일로 이동
-        mdsBinding.diaryPreBtn.setOnClickListener {
+        mdsnBinding.diaryPreBtnNull.setOnClickListener {
             MyDiaryScriptInfo(selectedYear, selectedMonth, selectedDay-1)
         }
 
         //다음 누르면 후일로 이동
-        mdsBinding.diaryNextBtn.setOnClickListener {
+        mdsnBinding.diaryNextBtnNull.setOnClickListener {
             MyDiaryScriptInfo(selectedYear, selectedMonth, selectedDay+1)
-        }
-
-        //수정하기 누르면 수정가능
-        mdsBinding.diaryScriptChangeBtn.setOnClickListener{
-            // RecyclerView의 모든 아이템에 있는 EditText의 focusable을 true로 설정하여 수정 가능하게 함
-            for (i in 0 until recyclerView.childCount) {
-                val viewHolder = recyclerView.getChildViewHolder(recyclerView.getChildAt(i))
-                if (viewHolder is DiaryContentAdapter.DiaryContentViewHolder) {
-                    viewHolder.contentsTextView.isFocusable = true
-                    viewHolder.contentsTextView.isFocusableInTouchMode = true
-                    viewHolder.hashtagTextView.isFocusable = true
-                    viewHolder.hashtagTextView.isFocusableInTouchMode = true
-                }
-            }
         }
     }
 
@@ -184,7 +151,7 @@ class MyDiaryScript : AppCompatActivity() {
                                 Log.e("Diary Content", "Input Expression: ${content.input_expr}")
                             }
 
-                            val intent = Intent(this@MyDiaryScript, MyDiaryScript::class.java)
+                            val intent = Intent(this@MyDiaryScriptNull, MyDiaryScript::class.java)
                             intent.putExtra("selectedYear", selectedYear)
                             intent.putExtra("selectedMonth", selectedMonth)
                             intent.putExtra("selectedDay", selectedDay)
@@ -201,7 +168,7 @@ class MyDiaryScript : AppCompatActivity() {
                             // diaryContents가 비어 있는 경우 처리
                             Log.e("MyDiaryMain", "diaryContents is empty")
 
-                            val intent = Intent(this@MyDiaryScript, MyDiaryScriptNull::class.java)
+                            val intent = Intent(this@MyDiaryScriptNull, MyDiaryScriptNull::class.java)
                             intent.putExtra("selectedYear", selectedYear)
                             intent.putExtra("selectedMonth", selectedMonth)
                             intent.putExtra("selectedDay", selectedDay)
@@ -216,7 +183,7 @@ class MyDiaryScript : AppCompatActivity() {
                         // diaryContents가 null일 때 처리
                         Log.e("MyDiaryMain", "diaryContents is null")
 
-                        val intent = Intent(this@MyDiaryScript, MyDiaryScriptNull::class.java)
+                        val intent = Intent(this@MyDiaryScriptNull, MyDiaryScriptNull::class.java)
                         intent.putExtra("selectedYear", selectedYear)
                         intent.putExtra("selectedMonth", selectedMonth)
                         intent.putExtra("selectedDay", selectedDay)
@@ -232,7 +199,7 @@ class MyDiaryScript : AppCompatActivity() {
                     // 응답이 없을때
                     Log.e("MyDiaryMain", "NO response")
 
-                    val intent = Intent(this@MyDiaryScript, MyDiaryScriptNull::class.java)
+                    val intent = Intent(this@MyDiaryScriptNull, MyDiaryScriptNull::class.java)
                     intent.putExtra("selectedYear", selectedYear)
                     intent.putExtra("selectedMonth", selectedMonth)
                     intent.putExtra("selectedDay", selectedDay)
