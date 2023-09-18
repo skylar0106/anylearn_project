@@ -7,7 +7,7 @@ interface ScriptsGetService {
     @GET("api/v1/scripts/")
     fun scripListGet(
         @Header("Cookie") cookieToken: String,
-    ): Call<MyScriptList.ScriptListResponseModel>
+    ): Call<List<MyScriptList.ScriptListResponseModel>>
 }
 
 
