@@ -20,17 +20,19 @@ class ScriptNameInput : AppCompatActivity() {
         // WithaiLevel 클래스의 WebSocket 객체 얻기
         val webSocket = WithaiLevel.getWebSocketInstance()
 
-        var title = sniBinding.editTitleInput.text.toString()
-        var hashtagString = sniBinding.ScriptNameInputTitle.toString()
-        var hashtags = hashtagString.split(" ")
 
-        val saveJson = JSONObject()
-        saveJson.put("type", "save")
-        saveJson.put("message", "save")
-        saveJson.put("title", "$title")
-        saveJson.put("hashtags", "$hashtags")
 
         sniBinding.nameInputListBtn.setOnClickListener{
+            var title = sniBinding.editTitleInput.text.toString()
+            var hashtagString = sniBinding.editSubjectInput.toString()
+            var hashtags = hashtagString.split(" ")
+
+            val saveJson = JSONObject()
+            saveJson.put("type", "save")
+            saveJson.put("message", "save")
+            saveJson.put("title", "$title")
+            saveJson.put("hashtags", "$hashtags")
+
             webSocket.send(saveJson.toString())
             Log.d("saveScripts", "title: $title hashtagString: $hashtagString")
 
@@ -39,8 +41,18 @@ class ScriptNameInput : AppCompatActivity() {
         }
 
         sniBinding.nameInputHomeBtn.setOnClickListener{
+            var title = sniBinding.editTitleInput.text.toString()
+            var hashtagString = sniBinding.editSubjectInput.text.toString()
+            var hashtags = hashtagString.split(" ")
+
+            val saveJson = JSONObject()
+            saveJson.put("type", "save")
+            saveJson.put("message", "save")
+            saveJson.put("title", "$title")
+            saveJson.put("hashtags", "$hashtags")
+
             webSocket.send(saveJson.toString())
-            Log.d("saveScripts", "title: $title hashtagString: $hashtagString")
+            Log.d("saveScripts", "title: $title hashtags: $hashtags")
 
             val intent = Intent(this, MainPage::class.java)
             startActivity(intent)

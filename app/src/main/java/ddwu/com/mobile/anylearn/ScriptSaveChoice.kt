@@ -20,6 +20,7 @@ class ScriptSaveChoice : AppCompatActivity() {
         val webSocket = WithaiLevel.getWebSocketInstance()
 
         sscBinding.saveBtn.setOnClickListener{
+
             val intent = Intent(this, ScriptNameInput::class.java)
             startActivity(intent)
         }

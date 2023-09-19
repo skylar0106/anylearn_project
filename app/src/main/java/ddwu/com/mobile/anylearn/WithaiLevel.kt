@@ -21,6 +21,7 @@ import okhttp3.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
+import kotlin.properties.Delegates
 
 
 class WithaiLevel : AppCompatActivity() {
@@ -34,9 +35,18 @@ class WithaiLevel : AppCompatActivity() {
     // WebSocket 객체를 싱글톤으로 생성
     companion object {
         private lateinit var webSocket: WebSocket
+
+        private var roomIdValue: Int = 0
+
+        var roomId: Int
+            get() = roomIdValue
+            set(value) {
+                roomIdValue = value
+            }
         fun getWebSocketInstance(): WebSocket {
             return webSocket
         }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +75,8 @@ class WithaiLevel : AppCompatActivity() {
 
         val mySharedPreferences = MySharedPreferences(this)
         val receivedIntent = intent
-        val roomId = receivedIntent.getIntExtra("roomId", 0)
+        roomId = receivedIntent.getIntExtra("roomId", 0)
+
 
         val request: Request = Request.Builder()
             .url("ws://34.81.3.83:8000/ws/chats/$roomId/")

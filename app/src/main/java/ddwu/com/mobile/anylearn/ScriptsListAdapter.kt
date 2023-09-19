@@ -32,14 +32,16 @@ class ScriptsListAdapter(val context: Context, val scriptList: ArrayList<MyScrip
 
         init {
             view.setOnClickListener {
+
+
                 val script = scriptList[adapterPosition]
                 val intent = Intent(context, MyScript::class.java)
                 intent.putExtra("script_title", script.title)
-                intent.putExtra("script_learningDate", script.learningDate)
-                intent.putExtra("script_contents", script.contents)
-                intent.putExtra("script_addDiary", script.addDiary)
-                intent.putExtra("script_hashtag", script.hashtag)
-                Log.d("script내용 확인", "title: ${script.title}, learningDate: ${script.learningDate}")
+//                intent.putExtra("script_learningDate", script.learningDate)
+//                intent.putExtra("script_contents", script.contents)
+//                intent.putExtra("script_addDiary", script.addDiary)
+//                intent.putExtra("script_hashtag", script.hashtag)
+//                Log.d("script내용 확인", "title: ${script.title}, learningDate: ${script.learningDate}")
                 context.startActivity(intent)
             }
         }
