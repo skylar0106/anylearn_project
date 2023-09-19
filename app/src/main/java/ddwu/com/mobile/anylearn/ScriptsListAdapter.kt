@@ -43,6 +43,7 @@ class ScriptsListAdapter(val context: Context, val scriptList: ArrayList<MyScrip
                 context.startActivity(intent)
             }
         }
+
     }
 }
 

@@ -41,6 +41,19 @@ class DiaryContentAdapter(var diaryContents: List<MyDiaryMain.DiaryContent>)
         notifyDataSetChanged()
     }
 
+    // 수정된 내용을 추출하는 메서드
+    fun getModifiedContents(): ArrayList<String> {
+        val modifiedContents = ArrayList<String>()
+        for (content in diaryContents) {
+            modifiedContents.add(content.contents)
+            modifiedContents.add(content.hashtag.toString())
+            modifiedContents.add(content.add_diary.toString())
+            modifiedContents.add(content.show_expr.toString())
+            modifiedContents.add(content.input_expr.toString())
+        }
+        return modifiedContents
+    }
+
     // getItemCount: 데이터 아이템 수 반환
     override fun getItemCount() = diaryContents.size
 }

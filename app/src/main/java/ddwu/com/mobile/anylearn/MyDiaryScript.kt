@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.annotations.SerializedName
 import ddwu.com.mobile.anylearn.databinding.ActivityMyDiaryScriptBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -83,6 +84,25 @@ class MyDiaryScript : AppCompatActivity() {
                     viewHolder.hashtagTextView.isFocusableInTouchMode = true
                 }
             }
+            mdsBinding.diaryScriptUsercomment.isFocusable = true
+            mdsBinding.diaryScriptUsercomment.isFocusableInTouchMode = true
+        }
+
+        //저장하기 누르면 저장가능
+        mdsBinding.diaryScriptSaveBtn.setOnClickListener{
+            for (i in 0 until recyclerView.childCount) {
+                val viewHolder = recyclerView.getChildViewHolder(recyclerView.getChildAt(i))
+                if (viewHolder is DiaryContentAdapter.DiaryContentViewHolder) {
+                    viewHolder.contentsTextView.isFocusable = false
+                    viewHolder.contentsTextView.isFocusableInTouchMode = false
+                    viewHolder.hashtagTextView.isFocusable = false
+                    viewHolder.hashtagTextView.isFocusableInTouchMode = false
+                }
+            }
+            mdsBinding.diaryScriptUsercomment.isFocusable = false
+            mdsBinding.diaryScriptUsercomment.isFocusableInTouchMode = false
+
+            DiaryUpdate(mdsBinding.diaryScriptUsercomment.text.toString(), adapter.getModifiedContents())
         }
     }
 
@@ -160,6 +180,53 @@ class MyDiaryScript : AppCompatActivity() {
 
         // 변경된 날짜를 텍스트로 출력
         Log.d("MyDiaryMain", "Formatted Date: $selectedYear-$selectedMonth-$selectedDay")
+    }
+
+    data class RequestModel(
+        @SerializedName("comment") val comment: String,
+        @SerializedName("diaryContents") val diaryContents: ArrayList<String>)
+
+    fun DiaryUpdate(comment: String, diatryContent: ArrayList<String>){
+        val mySharedPreferences = MySharedPreferences(this)
+        lateinit var dateString : String
+
+        if(selectedMonth < 10) {
+            if (selectedDay < 10)
+                dateString = "$selectedYear-0$selectedMonth-0$selectedDay"
+            else
+                dateString = "$selectedYear-0$selectedMonth-$selectedDay"
+        }
+        else {
+            if (selectedDay < 10)
+                dateString = "$selectedYear-$selectedMonth-0$selectedDay"
+            else
+                dateString = "$selectedYear-$selectedMonth-$selectedDay"
+        }
+        val apiService = RetrofitConfig(this).retrofit.create(MyDiarySaveApiService::class.java)
+        val csrfToken = mySharedPreferences.getCsrfToken()
+        val cookieToken = mySharedPreferences.getCookieToken()
+        val sessionId = mySharedPreferences.getSessionId()
+
+        val requestModel =
+            MyDiaryScript.RequestModel(comment = comment, diaryContents = diatryContent)
+
+        val call: Call<Void> =
+            apiService.postSubject( "$csrfToken","csrftoken=$cookieToken; sessionid=$sessionId", dateString, requestModel)
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+
+                    Log.d("save", "success save")
+                } else {
+                    Log.e("save", "failed save")
+                }
+            }
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("CsrfToken", "HTTP token request error: ${t.message}")
+            }
+        })
     }
 
     fun MyDiaryScriptInfo(year: Int, month: Int, day: Int) {

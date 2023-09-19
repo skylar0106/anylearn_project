@@ -13,7 +13,6 @@ import ddwu.com.mobile.anylearn.databinding.ActivityScriptListAdapterOutBinding
 import org.w3c.dom.Text
 
 class ScriptListAdapterOut (val context: Context, val scriptList: MutableList<MyScriptList.outModel>): RecyclerView.Adapter<ScriptListAdapterOut.MyViewHolder>() {
-
     override fun getItemCount(): Int = scriptList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
