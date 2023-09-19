@@ -27,11 +27,5 @@ class ScriptsListAdapter(val context: Context, val scriptList: ArrayList<MyScrip
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.script_list_title)
         val date: TextView = view.findViewById(R.id.script_list_date)
-
-        init {
-            view.setOnClickListener {
-
-            }
-        }
     }
 }

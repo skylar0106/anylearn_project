@@ -61,38 +61,21 @@
 
     </SearchView>
 
-    <CheckBox
-        android:id="@+id/checkBox_subject"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="해시태그"
-        app:layout_constraintStart_toEndOf="@+id/checkBox_date"
-        app:layout_constraintTop_toBottomOf="@+id/scriptList_search" />
-
-    <CheckBox
-        android:id="@+id/checkBox_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_weight="1"
-        android:text="날짜별"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scriptList_search" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/script_list_main_recyclerview"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_gravity="center_horizontal"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        android:paddingLeft="25dp"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp"
+        android:paddingBottom="30dp"
         app:layout_constraintBottom_toTopOf="@+id/scriptList_home_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBox_subject" />
+        app:layout_constraintTop_toBottomOf="@+id/scriptList_search" />
 
     <ImageView
         android:id="@+id/scriptList_home_btn"

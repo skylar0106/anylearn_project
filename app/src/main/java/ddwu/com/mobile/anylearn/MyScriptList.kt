@@ -57,15 +57,6 @@ class MyScriptList : AppCompatActivity() {
 
         // checkConnection 함수 호출
         scriptListGet()
-        // 필요한 작업 수행 어댑터 다시
-        val adapter = ScriptListAdapterOut(this@MyScriptList, scriptListOut)
-        mslBinding.scriptListMainRecyclerview.adapter = adapter
-
-        val layoutManager = LinearLayoutManager(this@MyScriptList)
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
-        mslBinding.scriptListMainRecyclerview.layoutManager = layoutManager
-
-
     }
     data class outModel(
         val month: String,
@@ -173,10 +164,19 @@ class MyScriptList : AppCompatActivity() {
                     scriptListOut.add(outModel("11월", scriptList11))
                     scriptListOut.add(outModel("12월", scriptList12))
                     Log.d("ListCheck", "List: $scriptListOut")
+
+                    Log.d("adapter", "연결 성공")
+                    val adapter = ScriptListAdapterOut(this@MyScriptList, scriptListOut)
+                    mslBinding.scriptListMainRecyclerview.adapter = adapter
+
+                    val layoutManager = LinearLayoutManager(this@MyScriptList)
+                    layoutManager.orientation = LinearLayoutManager.VERTICAL
+                    mslBinding.scriptListMainRecyclerview.layoutManager = layoutManager
                 }
                 else {
                     Log.e("ScriptListGet", "HTTP signup request failed. Error code: ${response.code()}")
                     Log.e("ScriptListGet", " cookieToken: $cookieToken" + " sessionId: $sessionId")
+
                 }
             }
 
@@ -185,5 +185,4 @@ class MyScriptList : AppCompatActivity() {
             }
         })
     }
-
 }
