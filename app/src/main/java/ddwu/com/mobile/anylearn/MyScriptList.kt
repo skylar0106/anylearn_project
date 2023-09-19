@@ -163,15 +163,18 @@ class MyScriptList : AppCompatActivity() {
                     scriptListOut.add(outModel("10월", scriptList10))
                     scriptListOut.add(outModel("11월", scriptList11))
                     scriptListOut.add(outModel("12월", scriptList12))
+
                     Log.d("ListCheck", "List: $scriptListOut")
 
                     Log.d("adapter", "연결 성공")
+
                     val adapter = ScriptListAdapterOut(this@MyScriptList, scriptListOut)
                     mslBinding.scriptListMainRecyclerview.adapter = adapter
 
                     val layoutManager = LinearLayoutManager(this@MyScriptList)
                     layoutManager.orientation = LinearLayoutManager.VERTICAL
                     mslBinding.scriptListMainRecyclerview.layoutManager = layoutManager
+
                 }
                 else {
                     Log.e("ScriptListGet", "HTTP signup request failed. Error code: ${response.code()}")
