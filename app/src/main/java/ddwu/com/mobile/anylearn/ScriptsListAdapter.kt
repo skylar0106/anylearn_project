@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ScriptsListAdapter(val context: Context, val scriptList: ArrayList<MyScriptList.Item>) :
+class ScriptsListAdapter(val context: Context, val scriptList: ArrayList<MyScriptList.Item>, val scriptTitleList : ArrayList<String>) :
     RecyclerView.Adapter<ScriptsListAdapter.MyViewHolder>() {
 
     override fun getItemCount(): Int = scriptList.size
@@ -17,7 +17,7 @@ class ScriptsListAdapter(val context: Context, val scriptList: ArrayList<MyScrip
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.activity_scripts_list_adapter, parent, false)
-        return MyViewHolder(context, itemView, scriptList)
+        return MyViewHolder(context, itemView, scriptList, scriptTitleList)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -26,17 +26,16 @@ class ScriptsListAdapter(val context: Context, val scriptList: ArrayList<MyScrip
         holder.date.text = script.learningDate
     }
 
-    class MyViewHolder(context: Context, view: View, scriptList: List<MyScriptList.Item>) : RecyclerView.ViewHolder(view) {
+    class MyViewHolder(context: Context, view: View, scriptList: List<MyScriptList.Item>, scriptTitleList : ArrayList<String>) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.script_list_title)
         val date: TextView = view.findViewById(R.id.script_list_date)
 
         init {
             view.setOnClickListener {
-
-
                 val script = scriptList[adapterPosition]
                 val intent = Intent(context, MyScript::class.java)
                 intent.putExtra("script_title", script.title)
+                intent.putExtra("script_title_list", scriptTitleList)
 //                intent.putExtra("script_learningDate", script.learningDate)
 //                intent.putExtra("script_contents", script.contents)
 //                intent.putExtra("script_addDiary", script.addDiary)
