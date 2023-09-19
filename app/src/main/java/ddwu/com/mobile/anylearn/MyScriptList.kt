@@ -57,13 +57,9 @@ class MyScriptList : AppCompatActivity() {
 
         // checkConnection 함수 호출
         scriptListGet()
+        Log.d("ListCheck", "List: $scriptListOut")
         // 필요한 작업 수행 어댑터 다시
-        val adapter = ScriptListAdapterOut(this@MyScriptList, scriptListOut)
-        mslBinding.scriptListMainRecyclerview.adapter = adapter
 
-        val layoutManager = LinearLayoutManager(this@MyScriptList)
-        layoutManager.orientation = LinearLayoutManager.VERTICAL
-        mslBinding.scriptListMainRecyclerview.layoutManager = layoutManager
 
 
     }
@@ -172,7 +168,15 @@ class MyScriptList : AppCompatActivity() {
                     scriptListOut.add(outModel("10월", scriptList10))
                     scriptListOut.add(outModel("11월", scriptList11))
                     scriptListOut.add(outModel("12월", scriptList12))
-                    Log.d("ListCheck", "List: $scriptListOut")
+                    
+
+                    val adapter = ScriptListAdapterOut(this@MyScriptList, scriptListOut)
+                    mslBinding.scriptListMainRecyclerview.adapter = adapter
+
+                    val layoutManager = LinearLayoutManager(this@MyScriptList)
+                    layoutManager.orientation = LinearLayoutManager.VERTICAL
+                    mslBinding.scriptListMainRecyclerview.layoutManager = layoutManager
+
                 }
                 else {
                     Log.e("ScriptListGet", "HTTP signup request failed. Error code: ${response.code()}")
