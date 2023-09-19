@@ -32,13 +32,15 @@ class MyScript : AppCompatActivity() {
     lateinit var msBinding : ActivityMyScriptBinding
     lateinit var selectedSentence : String
     lateinit var dialog: Dialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         msBinding = ActivityMyScriptBinding.inflate(layoutInflater)
         setContentView(msBinding.root)
 
         val intent = intent // 현재 액티비티의 Intent 객체를 가져옴
-        val scriptTitle = intent.getStringExtra("script_title") // "script_title" 키로 전달한 데이터를 받아옴
+        var scriptTitle = intent.getStringExtra("script_title") // "script_title" 키로 전달한 데이터를 받아옴
+        val scriptTitleList = intent.getStringArrayListExtra("script_title_list")
 //        val scriptDate = intent.getStringExtra("script_learningDate") // "script_date" 키로 전달한 데이터를 받아옴
 //        val scriptContents = intent.getStringExtra("script_contents")
 //        val scriptAddDiary = intent.getIntExtra("script_addDiary", 0)
@@ -48,6 +50,7 @@ class MyScript : AppCompatActivity() {
         if(scriptTitle != null) {
             myscriptGet(scriptTitle)
         }
+        Log.d("script title list", "title list : $scriptTitleList")
 
         msBinding.scriptHomeBtn.setOnClickListener{
             val intent = Intent(this, MainPage::class.java)
@@ -67,8 +70,53 @@ class MyScript : AppCompatActivity() {
 
         msBinding.scriptChangedBtn.setOnClickListener{
             if(selectedSentence != null)
-                if(scriptTitle != null)
-                    getParaphrase(selectedSentence, scriptTitle)
+                scriptTitle?.let { getParaphrase(selectedSentence, it) }
+        }
+
+        // 이전 버튼 클릭 시
+        msBinding.scriptPreBtn.setOnClickListener {
+            if(!msBinding.scriptSubject.text.toString().equals(scriptTitle))
+                scriptTitle = msBinding.scriptSubject.text.toString()
+            Log.d("title", "$scriptTitle")
+            var currentScriptIndex = scriptTitleList?.indexOf(scriptTitle)
+            Log.d("index", "$currentScriptIndex")
+            if (currentScriptIndex != null) {
+                if (currentScriptIndex > 0) {
+                    currentScriptIndex-- // 현재 스크립트 인덱스를 이전 스크립트로 감소
+                    val previousScriptTitle = scriptTitleList?.get(currentScriptIndex)
+                    if(previousScriptTitle != null) {
+                        myscriptGet(previousScriptTitle) // 이전 스크립트의 정보를 서버에서 가져옴
+                        Log.d("preindex", "$currentScriptIndex")
+                    }
+                } else {
+                    // 현재 스크립트가 첫 번째 스크립트인 경우에 대한 처리
+                    Toast.makeText(this, "더 이상 이전 스크립트가 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        // 다음 버튼 클릭 시
+        msBinding.scriptNextBtn.setOnClickListener {
+            if(!msBinding.scriptSubject.text.toString().equals(scriptTitle))
+                scriptTitle = msBinding.scriptSubject.text.toString()
+            Log.d("title", "$scriptTitle")
+            var currentScriptIndex = scriptTitleList?.indexOf(scriptTitle)
+            Log.d("index", "$currentScriptIndex")
+            if (currentScriptIndex != null) {
+                if (scriptTitleList != null) {
+                    if (currentScriptIndex < scriptTitleList.size - 1) {
+                        currentScriptIndex++ // 현재 스크립트 인덱스를 다음 스크립트로 증가
+                        val nextScriptTitle = scriptTitleList?.get(currentScriptIndex)
+                        if(nextScriptTitle != null) {
+                            myscriptGet(nextScriptTitle) // 다음 스크립트의 정보를 서버에서 가져옴
+                            Log.d("nxtindex", "$currentScriptIndex")
+                        }
+                    } else {
+                        // 현재 스크립트가 마지막 스크립트인 경우에 대한 처리
+                        Toast.makeText(this, "더 이상 다음 스크립트가 없습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
     data class ScriptResponseModel(

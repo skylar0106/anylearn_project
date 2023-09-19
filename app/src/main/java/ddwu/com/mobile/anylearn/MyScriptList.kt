@@ -20,7 +20,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MyScriptList : AppCompatActivity() {
-
+    val scriptTitles = ArrayList<String>()
     lateinit var mslBinding : ActivityMyScriptListBinding
     companion object{
         lateinit var scriptListOut: MutableList<outModel>
@@ -61,13 +61,13 @@ class MyScriptList : AppCompatActivity() {
         mslBinding.scriptListSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 // 검색어를 서버로 전송하고 검색 결과를 업데이트합니다.
-                updateSearchResults(query)
+                updateSearchResults(query, scriptTitles)
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 // 검색어가 변경될 때도 검색 결과를 업데이트합니다.
-                updateSearchResults(newText)
+                updateSearchResults(newText, scriptTitles)
                 return true
             }
         })
@@ -179,15 +179,22 @@ class MyScriptList : AppCompatActivity() {
 
                     Log.d("ListCheck", "List: $scriptListOut")
 
+                    // 스크립트 목록에서 스크립트 제목을 추출하고 ArrayList에 추가
+                    for (script in scriptListOut) {
+                        for (item in script.ListItem) {
+                            val title = item.title
+                            scriptTitles.add(title)
+                        }
+                    }
+
                     Log.d("adapter", "연결 성공")
 
-                    val adapter = ScriptListAdapterOut(this@MyScriptList, scriptListOut)
+                    val adapter = ScriptListAdapterOut(this@MyScriptList, scriptListOut, scriptTitles)
                     mslBinding.scriptListMainRecyclerview.adapter = adapter
 
                     val layoutManager = LinearLayoutManager(this@MyScriptList)
                     layoutManager.orientation = LinearLayoutManager.VERTICAL
                     mslBinding.scriptListMainRecyclerview.layoutManager = layoutManager
-
                 }
                 else {
                     Log.e("ScriptListGet", "HTTP signup request failed. Error code: ${response.code()}")
@@ -202,7 +209,7 @@ class MyScriptList : AppCompatActivity() {
         })
     }
 
-    private fun updateSearchResults(query: String?) {
+    private fun updateSearchResults(query: String?, scriptTitleList : ArrayList<String>) {
         val filteredScriptList = mutableListOf<outModel>()
 
         if (!query.isNullOrBlank()) {
@@ -222,7 +229,7 @@ class MyScriptList : AppCompatActivity() {
         }
 
         // RecyclerView 어댑터에 업데이트된 검색 결과를 설정합니다.
-        val adapter = ScriptListAdapterOut(this, filteredScriptList)
+        val adapter = ScriptListAdapterOut(this, filteredScriptList, scriptTitleList)
         mslBinding.scriptListMainRecyclerview.adapter = adapter
     }
 }

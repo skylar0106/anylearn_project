@@ -12,13 +12,16 @@ import ddwu.com.mobile.anylearn.databinding.ActivityMyScriptListBinding
 import ddwu.com.mobile.anylearn.databinding.ActivityScriptListAdapterOutBinding
 import org.w3c.dom.Text
 
-class ScriptListAdapterOut (val context: Context, val scriptList: MutableList<MyScriptList.outModel>): RecyclerView.Adapter<ScriptListAdapterOut.MyViewHolder>() {
+class ScriptListAdapterOut (val context: Context,
+                            val scriptList: MutableList<MyScriptList.outModel>,
+                            val scriptTitleList : ArrayList<String>)
+    : RecyclerView.Adapter<ScriptListAdapterOut.MyViewHolder>() {
     override fun getItemCount(): Int = scriptList.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemBinding = ActivityScriptListAdapterOutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-        return MyViewHolder(context, itemBinding)
+        return MyViewHolder(context, itemBinding, scriptTitleList)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -30,11 +33,11 @@ class ScriptListAdapterOut (val context: Context, val scriptList: MutableList<My
 
     }
 
-    class MyViewHolder(val context: Context, val itemBinding: ActivityScriptListAdapterOutBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+    class MyViewHolder(val context: Context, val itemBinding: ActivityScriptListAdapterOutBinding, val scriptTitleList : ArrayList<String>) : RecyclerView.ViewHolder(itemBinding.root) {
         fun bind(item: MyScriptList.outModel) {
 //            itemBinding.model = item
 
-            val adapter = ScriptsListAdapter(context, item.ListItem)
+            val adapter = ScriptsListAdapter(context, item.ListItem, scriptTitleList)
 
             itemBinding.scriptListOutRecyclerview.adapter = adapter
             itemBinding.scriptListOutRecyclerview.layoutManager = LinearLayoutManager(context)
