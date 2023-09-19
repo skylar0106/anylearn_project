@@ -73,7 +73,7 @@ class MyScriptList : AppCompatActivity() {
     )
     data class Item(
         @SerializedName("title") val title: String,
-        @SerializedName("hashtag") val hashtag: List<String>,
+        @SerializedName("hashtag") val hashtag: Array<String>,
         @SerializedName("contents") val contents: String,
         @SerializedName("level") val level: String,
         @SerializedName("learningDate") val learningDate: String,

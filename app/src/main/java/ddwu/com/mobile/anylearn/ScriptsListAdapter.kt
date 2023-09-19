@@ -1,6 +1,8 @@
 package ddwu.com.mobile.anylearn
 
 import android.content.Context
+import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +17,7 @@ class ScriptsListAdapter(val context: Context, val scriptList: ArrayList<MyScrip
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.activity_scripts_list_adapter, parent, false)
-        return MyViewHolder(itemView)
+        return MyViewHolder(context, itemView, scriptList)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -24,14 +26,23 @@ class ScriptsListAdapter(val context: Context, val scriptList: ArrayList<MyScrip
         holder.date.text = script.learningDate
     }
 
-    class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class MyViewHolder(context: Context, view: View, scriptList: List<MyScriptList.Item>) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.script_list_title)
         val date: TextView = view.findViewById(R.id.script_list_date)
 
         init {
             view.setOnClickListener {
-
+                val script = scriptList[adapterPosition]
+                val intent = Intent(context, MyScript::class.java)
+                intent.putExtra("script_title", script.title)
+                intent.putExtra("script_learningDate", script.learningDate)
+                intent.putExtra("script_contents", script.contents)
+                intent.putExtra("script_addDiary", script.addDiary)
+                intent.putExtra("script_hashtag", script.hashtag)
+                Log.d("script내용 확인", "title: ${script.title}, learningDate: ${script.learningDate}")
+                context.startActivity(intent)
             }
         }
     }
 }
+
