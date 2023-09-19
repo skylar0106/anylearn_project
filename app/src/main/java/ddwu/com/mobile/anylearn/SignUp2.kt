@@ -26,7 +26,7 @@ import java.io.InputStream
 class SignUp2 : AppCompatActivity() {
 
     lateinit var suBinding2: ActivitySignUp2Binding
-
+    private var selectedImageUri: Uri? = null // 이미지 Uri를 저장할 변수 추가
     companion object {
         private const val REQUEST_PERMISSION = 1001
         private const val REQUEST_GALLERY = 1002
@@ -44,7 +44,7 @@ class SignUp2 : AppCompatActivity() {
             if (nickname.equals("닉네임") || nickname.isEmpty())
                 Toast.makeText(applicationContext, "닉네임을 입력해주세요", Toast.LENGTH_SHORT).show()
             else {
-                //signUp2Info(nickname, )
+                signUp2Info(nickname, selectedImageUri)
             }
         }
 
@@ -65,32 +65,10 @@ class SignUp2 : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, intent)
 
         if (requestCode == 102 && resultCode == Activity.RESULT_OK){
-            var currentImageURL = intent?.data
-            // Base64 인코딩부분
-            val ins: InputStream? = currentImageURL?.let {
-                applicationContext.contentResolver.openInputStream(
-                    it
-                )
-            }
-            val img: Bitmap = BitmapFactory.decodeStream(ins)
-            ins?.close()
-            val resized = Bitmap.createScaledBitmap(img, 256, 256, true)
-            val byteArrayOutputStream = ByteArrayOutputStream()
-            resized.compress(Bitmap.CompressFormat.JPEG, 60, byteArrayOutputStream)
-            val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
-            val outStream = ByteArrayOutputStream()
-            val res: Resources = resources
-            var profileImageBase64 = Base64.encodeToString(byteArray, NO_WRAP)
-            // 여기까지 인코딩 끝
-
+            selectedImageUri = intent?.data // 이미지 Uri를 저장
             // 이미지 뷰에 선택한 이미지 출력
             val imageview: ImageView = suBinding2.imageView2
-            imageview.setImageURI(currentImageURL)
-            try {
-                //이미지 선택 후 처리
-            }catch (e: Exception){
-                e.printStackTrace()
-            }
+            imageview.setImageURI(selectedImageUri)
         } else{
             Log.d("ActivityResult", "something wrong")
         }
@@ -101,10 +79,10 @@ class SignUp2 : AppCompatActivity() {
     )
     data class Signup2RequestModel(
         @SerializedName("nickname") val birth: String,
-        @SerializedName("avatar") val avatar: String
+        @SerializedName("avatar") val avatar: Uri?
     )
 
-    private fun signUp2Info(nickname: String, imageUri: Uri) {
+    private fun signUp2Info(nickname: String, imageUri: Uri?) {
         val apiService = RetrofitConfig(this).retrofit.create(Signup2ApiService::class.java)
         val mySharedPreferences = MySharedPreferences(this@SignUp2)
         val csrfToken = mySharedPreferences.getCsrfToken()
@@ -112,7 +90,7 @@ class SignUp2 : AppCompatActivity() {
         val cookieToken = mySharedPreferences.getCookieToken()
 
         // SignupRequestModel 객체 생성 및 전달
-        val requestModel = Signup2RequestModel(nickname, imageUri.toString())
+        val requestModel = Signup2RequestModel(nickname, imageUri)
         val call: Call<SignUp2ResponseModel> = apiService.signup2(
             "csrftoken=$cookieToken; sessionid=$sessionId",
             "$csrfToken",
