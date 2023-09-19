@@ -7,7 +7,7 @@ interface ScriptsGetService {
     @GET("api/v1/scripts/")
     fun scripListGet(
         @Header("Cookie") cookieToken: String,
-    ): Call<List<MyScriptList.ScriptListResponseModel>>
+    ): Call<Map<String, MutableList<MyScriptList.Item>>>
 }
 
 
