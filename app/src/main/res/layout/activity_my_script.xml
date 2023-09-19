@@ -61,135 +61,144 @@
 
     </SearchView>
 
-    <TextView
-        android:id="@+id/script_place"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:paddingLeft="43dp"
-        android:paddingBottom="4dp"
-        android:text="학교"
-        android:textColor="#C8D8EF"
-        android:textSize="15sp"
+        android:layout_height="500dp"
+        app:layout_constraintBottom_toTopOf="@+id/script_home_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/script_search" />
+        app:layout_constraintTop_toBottomOf="@+id/script_search">
 
-    <TextView
-        android:id="@+id/script_subject"
-        android:layout_width="308dp"
-        android:layout_height="410dp"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/base2_style"
-        android:paddingLeft="25dp"
-        android:paddingTop="13dp"
-        android:text="학교에서 대화하기(0)"
-        android:textColor="#375076"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/script_place" />
+        <TextView
+            android:id="@+id/script_subject"
+            android:layout_width="308dp"
+            android:layout_height="410dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/base2_style"
+            android:paddingLeft="25dp"
+            android:paddingTop="13dp"
+            android:text="학교에서 대화하기(0)"
+            android:textColor="#375076"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/script_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="64dp"
-        android:text="2023.01.01"
-        android:textColor="#375076"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/script_place" />
+        <ScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="0dp"
+            android:layout_height="252dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/script_changed_btn"
+            app:layout_constraintEnd_toEndOf="@+id/script_subject"
+            app:layout_constraintStart_toStartOf="@+id/script_subject"
+            app:layout_constraintTop_toBottomOf="@+id/script_date">
 
-    <TextView
-        android:id="@+id/script_content"
-        android:layout_width="240dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="64dp"
-        android:text="content"
-        android:textColor="#375076"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/script_place" />
+            <TextView
+                android:id="@+id/script_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="content"
+                android:textColor="#375076"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/script_place" />
+        </ScrollView>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/script_origin_btn"
-        android:layout_width="71dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="72dp"
-        android:layout_marginBottom="200dp"
-        android:background="@drawable/button_style"
-        android:text="원본 보기"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/script_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:text="2023.01.01"
+            android:textColor="#375076"
+            app:layout_constraintEnd_toEndOf="@+id/script_subject"
+            app:layout_constraintTop_toTopOf="@+id/script_subject" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/script_changed_btn"
-        android:layout_width="109dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="200dp"
-        android:background="@drawable/button_style"
-        android:text="수정된 표현 보기"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/script_origin_btn" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/script_delete_btn"
+            android:layout_width="44dp"
+            android:layout_height="29dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="64dp"
+            android:background="@drawable/button_style"
+            android:text="삭제"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/script_subject"
+            app:layout_constraintStart_toStartOf="@+id/script_subject" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/script_add_btn"
-        android:layout_width="44dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="200dp"
-        android:background="@drawable/button_style"
-        android:text="추가"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/script_changed_btn" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/script_changed_btn"
+            android:layout_width="109dp"
+            android:layout_height="29dp"
+            android:layout_marginBottom="64dp"
+            android:background="@drawable/button_style"
+            android:text="수정된 표현 보기"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/script_subject"
+            app:layout_constraintEnd_toStartOf="@+id/script_add_btn"
+            app:layout_constraintStart_toEndOf="@+id/script_delete_btn" />
 
-    <TextView
-        android:id="@+id/script_tag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:layout_marginTop="16dp"
-        android:text="#태그"
-        android:textColor="#FFFFFF"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/script_origin_btn" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/script_add_btn"
+            android:layout_width="44dp"
+            android:layout_height="29dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="64dp"
+            android:background="@drawable/button_style"
+            android:text="추가"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/script_subject"
+            app:layout_constraintEnd_toEndOf="@+id/script_subject" />
 
-    <TextView
-        android:id="@+id/script_pre_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
-        android:layout_marginTop="8dp"
-        android:text="&lt; 이전"
-        android:textColor="#FFFFFF"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/script_tag" />
+        <TextView
+            android:id="@+id/script_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="#태그"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toTopOf="@+id/script_pre_btn"
+            app:layout_constraintStart_toStartOf="@+id/script_subject"
+            app:layout_constraintTop_toBottomOf="@+id/script_delete_btn" />
 
-    <TextView
-        android:id="@+id/script_next_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="8dp"
-        android:text="다음 &gt;"
-        android:textColor="#FFFFFF"
-        app:layout_constraintStart_toEndOf="@+id/script_list_btn"
-        app:layout_constraintTop_toBottomOf="@+id/script_tag" />
+        <TextView
+            android:id="@+id/script_pre_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="&lt; 이전"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/script_subject"
+            app:layout_constraintStart_toStartOf="@+id/script_subject" />
 
-    <TextView
-        android:id="@+id/script_list_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="8dp"
-        android:text="목록으로"
-        android:textColor="#FFFFFF"
-        app:layout_constraintStart_toEndOf="@+id/script_pre_btn"
-        app:layout_constraintTop_toBottomOf="@+id/script_tag" />
+        <TextView
+            android:id="@+id/script_next_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="다음 &gt;"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/script_subject"
+            app:layout_constraintEnd_toEndOf="@+id/script_subject" />
+
+        <TextView
+            android:id="@+id/script_list_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="목록으로"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/script_subject"
+            app:layout_constraintEnd_toStartOf="@+id/script_next_btn"
+            app:layout_constraintStart_toEndOf="@+id/script_pre_btn" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/script_home_btn"

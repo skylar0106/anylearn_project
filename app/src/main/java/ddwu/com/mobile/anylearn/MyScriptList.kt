@@ -56,6 +56,11 @@ class MyScriptList : AppCompatActivity() {
         }
 
         // checkConnection 함수 호출
+//        scriptListGet()
+    }
+
+    override fun onResume() {
+        super.onResume()
         scriptListGet()
     }
     data class outModel(

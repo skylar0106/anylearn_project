@@ -1,11 +1,14 @@
 package ddwu.com.mobile.anylearn
 
+import ScriptAddService
+import ScriptDeleteService
 import ScriptGetService
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import com.google.gson.annotations.SerializedName
 import ddwu.com.mobile.anylearn.databinding.ActivityMyScriptBinding
 import retrofit2.Call
@@ -17,6 +20,9 @@ import java.nio.charset.StandardCharsets
 class MyScript : AppCompatActivity() {
 
     lateinit var msBinding : ActivityMyScriptBinding
+    companion object {
+        var addDiaryChange: Int = 0
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         msBinding = ActivityMyScriptBinding.inflate(layoutInflater)
@@ -26,7 +32,7 @@ class MyScript : AppCompatActivity() {
         val scriptTitle = intent.getStringExtra("script_title") // "script_title" 키로 전달한 데이터를 받아옴
 //        val scriptDate = intent.getStringExtra("script_learningDate") // "script_date" 키로 전달한 데이터를 받아옴
 //        val scriptContents = intent.getStringExtra("script_contents")
-//        val scriptAddDiary = intent.getIntExtra("script_addDiary", 0)
+        var scriptAddDiary = intent.getIntExtra("script_addDiary", 0)
 //        val scriptHashTag = intent.getStringArrayExtra("script_hashtag")
         Log.d("script내용 myscript", "title: $scriptTitle")
 
@@ -52,6 +58,20 @@ class MyScript : AppCompatActivity() {
             val intent = Intent(this, SettingPage::class.java)
             startActivity(intent)
         }
+
+        //스크립트 삭제 버튼
+        msBinding.scriptDeleteBtn.setOnClickListener{
+            if(scriptTitle != null) {
+                myscriptDelete(scriptTitle)
+            }
+            finish()
+        }
+        //다이어리로 추가
+        msBinding.scriptAddBtn.setOnClickListener{
+            if(scriptTitle != null) {
+                myscriptAdd(scriptTitle)
+            }
+        }
     }
     data class ScriptResponseModel(
         @SerializedName("title") val title: String,
@@ -62,6 +82,9 @@ class MyScript : AppCompatActivity() {
         @SerializedName("show_expr") val showExpr: Int,
         @SerializedName("input_expr") val inputExpr: String
     )
+    data class ScriptAddRequestModel(
+        @SerializedName("add_diary") val addDiary: Int
+    )
 
     private fun myscriptGet(title: String){
         val mySharedPreferences = MySharedPreferences(this)
@@ -71,6 +94,7 @@ class MyScript : AppCompatActivity() {
         val sessionId = mySharedPreferences.getSessionId()
         val roomId = "$title"
         Log.d("url확인", "url: $roomId")
+
 
         val call: Call<ScriptResponseModel> = apiService.scriptGet( "$csrfToken","csrftoken=$cookieToken; sessionid=$sessionId", roomId)
 
@@ -83,6 +107,9 @@ class MyScript : AppCompatActivity() {
                 val contents = responseBody?.contents
                 val learningDate = responseBody?.learningDate
                 val addDiary = responseBody?.addDiary
+                if (addDiary != null) {
+                    addDiaryChange = addDiary
+                }
                 val showExpr = responseBody?.showExpr
                 val inputExpr = responseBody?.inputExpr
                 if (response.isSuccessful) {
@@ -104,14 +131,80 @@ class MyScript : AppCompatActivity() {
                     msBinding.scriptDate.text = learningDate
                     msBinding.scriptContent.text = contents
                 } else {
-                    Log.e("MyScript", "HTTP signup request failed. Error code: ${response.code()}")
+                    Log.e("MyScriptGet", "HTTP request failed. Error code: ${response.code()}")
                 }
             }
             override fun onFailure(call: Call<ScriptResponseModel>, t: Throwable) {
-                Log.e("Signup", "HTTP withaiselect request error: ${t.message}")
+                Log.e("MyScriptGet", "HTTP request error: ${t.message}")
 
             }
         })
+    }
+    private fun myscriptDelete(title: String){
+        val mySharedPreferences = MySharedPreferences(this)
+        val apiService = RetrofitConfig(this).retrofit.create(ScriptDeleteService::class.java)
+        val csrfToken = mySharedPreferences.getCsrfToken()
+        val cookieToken = mySharedPreferences.getCookieToken()
+        val sessionId = mySharedPreferences.getSessionId()
+        val roomId = "$title"
+
+        val call: Call<Void> = apiService.scriptDelete( "$csrfToken","csrftoken=$cookieToken; sessionid=$sessionId", roomId)
+
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+
+                if (response.isSuccessful) {
+                    Log.e("MyScriptDelete", "성공!")
+                    // 서버로부터 성공적인 응답을 받았을 때 수행할 작업
+
+                } else {
+                    Log.e("MyScriptDelete", "HTTP request failed. Error code: ${response.code()}")
+                }
+            }
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("MyScriptDelete", "HTTP request error: ${t.message}")
+
+            }
+        })
+    }
+    private fun myscriptAdd(title: String){
+        val mySharedPreferences = MySharedPreferences(this)
+        val apiService = RetrofitConfig(this).retrofit.create(ScriptAddService::class.java)
+        val csrfToken = mySharedPreferences.getCsrfToken()
+        val cookieToken = mySharedPreferences.getCookieToken()
+        val sessionId = mySharedPreferences.getSessionId()
+        val roomId = "$title"
+        if(addDiaryChange == 0) {
+            addDiaryChange = 1
+
+            val requestModel = ScriptAddRequestModel(addDiary = addDiaryChange)
+            Log.d("addDiary", "addDiary: $addDiaryChange")
+
+            val call: Call<Void> = apiService.scriptAdd( "$csrfToken","csrftoken=$cookieToken; sessionid=$sessionId", roomId, requestModel)
+
+
+            call.enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+
+                    if (response.isSuccessful) {
+                        Log.e("MyScriptAdd", "성공!")
+                        // 서버로부터 성공적인 응답을 받았을 때 수행할 작업
+
+                    } else {
+                        Log.e("MyScriptAdd", "HTTP request failed. Error code: ${response.code()}")
+                    }
+                }
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Log.e("MyScriptAdd", "HTTP request error: ${t.message}")
+
+                }
+            })
+        }
+        else{
+            Toast.makeText(this@MyScript, "이미 다이어리에 추가된 스크립트입니다.", Toast.LENGTH_SHORT).show()
+        }
+
     }
 }
 
