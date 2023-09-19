@@ -75,7 +75,6 @@ class WithaiSelect : AppCompatActivity() {
         val sessionId = mySharedPreferences.getSessionId()
         val call: Call<SelectResponseModel> = apiService.postSubject( "$csrfToken","csrftoken=$cookieToken; sessionid=$sessionId", requestModel)
 
-
         call.enqueue(object : Callback<SelectResponseModel> {
             override fun onResponse(call: Call<SelectResponseModel>, response: Response<SelectResponseModel>) {
                 val responseBody = response.body()

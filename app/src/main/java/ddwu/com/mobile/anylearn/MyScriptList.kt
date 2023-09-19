@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -38,7 +39,6 @@ class MyScriptList : AppCompatActivity() {
         lateinit var scriptTitle: String
         lateinit var date: String
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mslBinding = ActivityMyScriptListBinding.inflate(layoutInflater)
@@ -62,6 +62,20 @@ class MyScriptList : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         scriptListGet()
+
+        mslBinding.scriptListSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // 검색어를 서버로 전송하고 검색 결과를 업데이트합니다.
+                updateSearchResults(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // 검색어가 변경될 때도 검색 결과를 업데이트합니다.
+                updateSearchResults(newText)
+                return true
+            }
+        })
     }
     data class outModel(
         val month: String,
@@ -91,7 +105,6 @@ class MyScriptList : AppCompatActivity() {
     data class ScriptListResponseModel2(
         val ListData2:  MutableList<Item>
     )
-
     private fun scriptListGet() {
         scriptListOut = mutableListOf()
         scriptList1 = ArrayList()
@@ -192,5 +205,29 @@ class MyScriptList : AppCompatActivity() {
                 Log.e("Signup", "HTTP withaiselect request error: ${t.message}")
             }
         })
+    }
+
+    private fun updateSearchResults(query: String?) {
+        val filteredScriptList = mutableListOf<outModel>()
+
+        if (!query.isNullOrBlank()) {
+            // 검색어가 비어있지 않을 때만 필터링 작업 수행
+            for (scriptMonth in scriptListOut) {
+                val filteredItems = scriptMonth.ListItem.filter { item ->
+                    item.title.contains(query, ignoreCase = true)
+                }
+
+                if (filteredItems.isNotEmpty()) {
+                    filteredScriptList.add(outModel(scriptMonth.month, ArrayList(filteredItems)))
+                }
+            }
+        } else {
+            // 검색어가 비어있으면 모든 스크립트를 보여줍니다.
+            filteredScriptList.addAll(scriptListOut)
+        }
+
+        // RecyclerView 어댑터에 업데이트된 검색 결과를 설정합니다.
+        val adapter = ScriptListAdapterOut(this, filteredScriptList)
+        mslBinding.scriptListMainRecyclerview.adapter = adapter
     }
 }
