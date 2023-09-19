@@ -4,12 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.annotations.SerializedName
-import ddwu.com.mobile.anylearn.R
-import ddwu.com.mobile.anylearn.databinding.ActivityMyDiaryMainBinding
 import ddwu.com.mobile.anylearn.databinding.ActivityMyDiaryScriptBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -94,7 +90,11 @@ class MyDiaryScript : AppCompatActivity() {
 
         // 날짜 변경 로직 추가
         val isFirstDayOfMonth = day+1 == 1
-        val isLastDayOfMonth =
+        val isLastDayOfMonth_Feb =
+            (day-1 == 28 || day-1 == 29) && month == 2
+        val isLastDayOfMonth_30 =
+            day-1 == 30 && (month == 4 || month == 6 || month == 9 || month == 11)
+        val isLastDayOfMonth_31 =
             day-1 == 31 && (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
         val isLeapYear = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
 
@@ -114,7 +114,7 @@ class MyDiaryScript : AppCompatActivity() {
                 selectedDay = previousMonthDays
             }
         }
-        else if (isLastDayOfMonth) {
+        else if (isLastDayOfMonth_31) {
             if (month == 12) {
                 selectedYear = year + 1
                 selectedMonth = 1
@@ -124,6 +124,34 @@ class MyDiaryScript : AppCompatActivity() {
                 val nextMonthDays = 1
                 selectedMonth = nextMonth
                 selectedDay = nextMonthDays
+            }
+        }
+        else if (isLastDayOfMonth_30) {
+            val nextMonth = month + 1
+            val nextMonthDays = 1
+            selectedMonth = nextMonth
+            selectedDay = nextMonthDays
+        }
+        else if (isLastDayOfMonth_Feb) {
+            if (isLeapYear){
+                if(day-1 == 29) {
+                    val nextMonth = 3
+                    val nextMonthDays = 1
+                    selectedMonth = nextMonth
+                    selectedDay = nextMonthDays
+                }
+                else
+                    selectedDay = day
+            }
+            else{
+                if(day-1 == 28) {
+                    val nextMonth = 3
+                    val nextMonthDays = 1
+                    selectedMonth = nextMonth
+                    selectedDay = nextMonthDays
+                }
+                else
+                    selectedDay = day
             }
         }
         else {
@@ -177,66 +205,116 @@ class MyDiaryScript : AppCompatActivity() {
                                 Log.e("Diary Content", "Contents: ${content.contents}")
                                 Log.e(
                                     "Diary Content",
-                                    "Hashtags: ${content.hashtag.joinToString(", ") { hashtag -> hashtag.tag }}"
+                                    "Hashtags: ${content.hashtag?.joinToString(", ") { hashtag -> hashtag.tag }}"
                                 )
                                 Log.e("Diary Content", "Add Diary: ${content.add_diary}")
                                 Log.e("Diary Content", "Show Expression: ${content.show_expr}")
                                 Log.e("Diary Content", "Input Expression: ${content.input_expr}")
                             }
 
-                            val intent = Intent(this@MyDiaryScript, MyDiaryScript::class.java)
-                            intent.putExtra("selectedYear", selectedYear)
-                            intent.putExtra("selectedMonth", selectedMonth)
-                            intent.putExtra("selectedDay", selectedDay)
+                            val diaryContentsList = ArrayList(diaryContents?.toList())
 
-                            // diaryContents를 Intent에 추가
-                            intent.putExtra("diaryContents", diaryContents.toTypedArray())
-
-                            if (comment != null){
+                            if(comment != null) {
                                 if (comment.isNotEmpty())
-                                    intent.putExtra("comment", comment)
+                                    mdsBinding.diaryScriptUsercomment.setText(comment)
+                                else
+                                    mdsBinding.diaryScriptUsercomment.setText("오늘의 스터디 코멘트를 남겨보세요")
                             }
-                            startActivity(intent)
+
+                            mdsBinding.diaryScriptYear.setText("${selectedYear}년")
+                            mdsBinding.diaryScriptMonth.setText("${selectedMonth}월")
+                            mdsBinding.diaryScriptDay.setText("${selectedDay}일")
+
+                            // RecyclerView에 레이아웃 매니저 설정 (수직 스크롤)
+                            recyclerView.layoutManager = LinearLayoutManager(this@MyDiaryScript)
+
+                            // RecyclerView 어댑터 생성 및 설정
+                            val adapter = DiaryContentAdapter(diaryContentsList)
+                            recyclerView.adapter = adapter
+
+                            // 다이어리 내용 갱신
+                            adapter.updateDiaryContents(diaryContentsList)
+                            adapter.notifyDataSetChanged()
+
                         } else {
                             // diaryContents가 비어 있는 경우 처리
                             Log.e("MyDiaryMain", "diaryContents is empty")
 
-                            val intent = Intent(this@MyDiaryScript, MyDiaryScriptNull::class.java)
-                            intent.putExtra("selectedYear", selectedYear)
-                            intent.putExtra("selectedMonth", selectedMonth)
-                            intent.putExtra("selectedDay", selectedDay)
-
-                            if (comment != null){
+                            if(comment != null) {
                                 if (comment.isNotEmpty())
-                                    intent.putExtra("comment", comment)
+                                    mdsBinding.diaryScriptUsercomment.setText(comment)
+                                else
+                                    mdsBinding.diaryScriptUsercomment.setText("오늘의 스터디 코멘트를 남겨보세요")
                             }
-                            startActivity(intent)
+
+                            mdsBinding.diaryScriptYear.setText("${selectedYear}년")
+                            mdsBinding.diaryScriptMonth.setText("${selectedMonth}월")
+                            mdsBinding.diaryScriptDay.setText("${selectedDay}일")
+
+                            val emptyDiaryContentsList = ArrayList(diaryContents?.toList())
+
+                            // RecyclerView에 레이아웃 매니저 설정 (수직 스크롤)
+                            recyclerView.layoutManager = LinearLayoutManager(this@MyDiaryScript)
+
+                            // RecyclerView 어댑터 생성 및 설정
+                            val adapter = DiaryContentAdapter(emptyDiaryContentsList)
+                            recyclerView.adapter = adapter
+
+                            // 다이어리 내용이 없을 때 RecyclerView 어댑터 갱신
+                            adapter.updateDiaryContents(emptyDiaryContentsList)
+                            adapter.notifyDataSetChanged()
                         }
                     } else {
                         // diaryContents가 null일 때 처리
                         Log.e("MyDiaryMain", "diaryContents is null")
 
-                        val intent = Intent(this@MyDiaryScript, MyDiaryScriptNull::class.java)
-                        intent.putExtra("selectedYear", selectedYear)
-                        intent.putExtra("selectedMonth", selectedMonth)
-                        intent.putExtra("selectedDay", selectedDay)
-
-                        if (comment != null){
+                        if(comment != null) {
                             if (comment.isNotEmpty())
-                                intent.putExtra("comment", comment)
+                                mdsBinding.diaryScriptUsercomment.setText(comment)
+                            else
+                                mdsBinding.diaryScriptUsercomment.setText("오늘의 스터디 코멘트를 남겨보세요")
                         }
-                        startActivity(intent)
+
+                        mdsBinding.diaryScriptYear.setText("${selectedYear}년")
+                        mdsBinding.diaryScriptMonth.setText("${selectedMonth}월")
+                        mdsBinding.diaryScriptDay.setText("${selectedDay}일")
+
+                        val emptyDiaryContentsList = listOf(
+                            MyDiaryMain.DiaryContent(null, null, "저장된 다이어리가 없습니다", null, null, null)
+                        )
+                        // RecyclerView에 레이아웃 매니저 설정 (수직 스크롤)
+                        recyclerView.layoutManager = LinearLayoutManager(this@MyDiaryScript)
+
+                        // RecyclerView 어댑터 생성 및 설정
+                        val adapter = DiaryContentAdapter(emptyDiaryContentsList)
+                        recyclerView.adapter = adapter
+
+                        // 다이어리 내용이 없을 때 RecyclerView 어댑터 갱신
+                        adapter.updateDiaryContents(emptyDiaryContentsList)
+                        adapter.notifyDataSetChanged()
                     }
                 }
                 else{
                     // 응답이 없을때
-                    Log.e("MyDiaryMain", "NO response")
+                    mdsBinding.diaryScriptYear.setText("${selectedYear}년")
+                    mdsBinding.diaryScriptMonth.setText("${selectedMonth}월")
+                    mdsBinding.diaryScriptDay.setText("${selectedDay}일")
 
-                    val intent = Intent(this@MyDiaryScript, MyDiaryScriptNull::class.java)
-                    intent.putExtra("selectedYear", selectedYear)
-                    intent.putExtra("selectedMonth", selectedMonth)
-                    intent.putExtra("selectedDay", selectedDay)
-                    startActivity(intent)
+                    mdsBinding.diaryScriptUsercomment.setText("오늘의 스터디 코멘트를 남겨보세요")
+
+                    val emptyDiaryContentsList = listOf(
+                        MyDiaryMain.DiaryContent(null, null, "저장된 다이어리가 없습니다", null, null, null)
+                    )
+                    // RecyclerView에 레이아웃 매니저 설정 (수직 스크롤)
+                    recyclerView.layoutManager = LinearLayoutManager(this@MyDiaryScript)
+
+                    // RecyclerView 어댑터 생성 및 설정
+                    val adapter = DiaryContentAdapter(emptyDiaryContentsList)
+                    recyclerView.adapter = adapter
+
+                    // 다이어리 내용이 없을 때 RecyclerView 어댑터 갱신
+                    adapter.updateDiaryContents(emptyDiaryContentsList)
+                    adapter.notifyDataSetChanged()
                 }
             }
             override fun onFailure(call: Call<MyDiaryMain.MyDiaryMainResponseModel>, t: Throwable) {

@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import com.google.gson.annotations.SerializedName
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
@@ -30,7 +31,6 @@ class SignIn : AppCompatActivity() {
         siBinding.btnStart.setOnClickListener {
             val email = siBinding.editEmail.text.toString()
             val password = siBinding.editName.text.toString()
-
 
             checkConnection(email, password)
         }
@@ -90,7 +90,6 @@ class SignIn : AppCompatActivity() {
     private fun checkConnection(requestBody1: String, requestBody2: String) {
         val mySharedPreferences = MySharedPreferences(this)
 
-
         val apiService = RetrofitConfig(this).retrofit.create(SignInApiService::class.java)
 
         // YourTokenRequestModel 객체 생성 및 전달
@@ -109,16 +108,13 @@ class SignIn : AppCompatActivity() {
                     val csrfToken = response.headers()["X-Csrftoken"].toString() // 헤더에서 CSRF 토큰 가져오기
                     val sessionId = response.headers()["Session-id"].toString() // 헤더에서 세션 아이디 가져오기
 
-
-
                     mySharedPreferences.saveCsrfToken(csrfToken)
                     mySharedPreferences.saveSessionId(sessionId)
 
-                    if (csrfToken != null) {
+                    if (csrfToken != "null") {
                         // 여기에서 토큰을 사용할 수 있습니다.
                         Log.d("Token", "Received token: $csrfToken" +
                                 "session_id: $sessionId"+"ok: $ok")
-
 
                         Log.d("CsrfToken", "Received token: $csrfToken" +
                                 "ok: $ok")
@@ -129,6 +125,8 @@ class SignIn : AppCompatActivity() {
                     } else {
                         Log.e("CsrfToken", "Token response body is null")
 
+                        val memberck = findViewById<TextView>(R.id.memberCheck)
+                        memberck.alpha = 1F
                     }
                 } else {
                     Log.e(

@@ -22,7 +22,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.Serializable
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 
 
@@ -101,7 +100,7 @@ class MyDiaryMain : AppCompatActivity() {
             todayDecorator,
             weekdayDecorator
         )
-        //mdmBinding.calendarView.setTopbarVisible(false)
+        mdmBinding.calendarView.setTopbarVisible(true)
 
         val koreanWeekDayFormatter: WeekDayFormatter = KoreanWeekDayFormatter()
         calendarView.setWeekDayFormatter(koreanWeekDayFormatter)
@@ -247,12 +246,12 @@ class MyDiaryMain : AppCompatActivity() {
     ): Serializable
 
     data class DiaryContent(
-        @SerializedName("hashtag") val hashtag: List<Hashtag>,
-        @SerializedName("id") val id: Int,
+        @SerializedName("hashtag") val hashtag: List<Hashtag>?,
+        @SerializedName("id") val id: Int?,
         @SerializedName("contents") val contents: String,
-        @SerializedName("add_diary") val add_diary: Int,
-        @SerializedName("show_expr") val show_expr: Int,
-        @SerializedName("input_expr") val input_expr: String
+        @SerializedName("add_diary") val add_diary: Int?,
+        @SerializedName("show_expr") val show_expr: Int?,
+        @SerializedName("input_expr") val input_expr: String?
     ) : Serializable
 
     data class Hashtag(
@@ -300,7 +299,7 @@ class MyDiaryMain : AppCompatActivity() {
                                 Log.e("Diary Content", "Contents: ${content.contents}")
                                 Log.e(
                                     "Diary Content",
-                                    "Hashtags: ${content.hashtag.joinToString(", ") { hashtag -> hashtag.tag }}"
+                                    "Hashtags: ${content.hashtag?.joinToString(", ") { hashtag -> hashtag.tag }}"
                                 )
                                 Log.e("Diary Content", "Add Diary: ${content.add_diary}")
                                 Log.e("Diary Content", "Show Expression: ${content.show_expr}")
@@ -315,19 +314,25 @@ class MyDiaryMain : AppCompatActivity() {
                             // diaryContents를 Intent에 추가
                             intent.putExtra("diaryContents", diaryContents.toTypedArray())
 
-                            if (comment != null){
+                            if (comment != null)
                                 if (comment.isNotEmpty())
                                     intent.putExtra("comment", comment)
-                            }
+
                             startActivity(intent)
                         } else {
                             // diaryContents가 비어 있는 경우 처리
                             Log.e("MyDiaryMain", "diaryContents is empty")
 
-                            val intent = Intent(this@MyDiaryMain, MyDiaryScriptNull::class.java)
+                            val intent = Intent(this@MyDiaryMain, MyDiaryScript::class.java)
                             intent.putExtra("selectedYear", year)
                             intent.putExtra("selectedMonth", month)
                             intent.putExtra("selectedDay", day)
+
+                            val emptyDiaryContentsList = listOf(
+                                MyDiaryMain.DiaryContent(null, null, "저장된 다이어리가 없습니다", null, null, null)
+                            )
+                            // emptyDiaryContentsList Intent에 추가
+                            intent.putExtra("diaryContents", emptyDiaryContentsList.toTypedArray())
 
                             if (comment != null){
                                 if (comment.isNotEmpty())
@@ -339,10 +344,17 @@ class MyDiaryMain : AppCompatActivity() {
                         // diaryContents가 null일 때 처리
                         Log.e("MyDiaryMain", "diaryContents is null")
 
-                        val intent = Intent(this@MyDiaryMain, MyDiaryScriptNull::class.java)
+                        val intent = Intent(this@MyDiaryMain, MyDiaryScript::class.java)
                         intent.putExtra("selectedYear", year)
                         intent.putExtra("selectedMonth", month)
                         intent.putExtra("selectedDay", day)
+
+                        val emptyDiaryContentsList = listOf(
+                            MyDiaryMain.DiaryContent(null, null, "저장된 다이어리가 없습니다", null, null, null)
+                        )
+                        // emptyDiaryContentsList Intent에 추가
+                        intent.putExtra("diaryContents", emptyDiaryContentsList.toTypedArray())
+
 
                         if (comment != null){
                             if (comment.isNotEmpty())
@@ -355,10 +367,17 @@ class MyDiaryMain : AppCompatActivity() {
                     // 응답 없을때
                     Log.e("MyDiaryMain", "No response")
 
-                    val intent = Intent(this@MyDiaryMain, MyDiaryScriptNull::class.java)
+                    val intent = Intent(this@MyDiaryMain, MyDiaryScript::class.java)
                     intent.putExtra("selectedYear", year)
                     intent.putExtra("selectedMonth", month)
                     intent.putExtra("selectedDay", day)
+
+                    val emptyDiaryContentsList = listOf(
+                        MyDiaryMain.DiaryContent(null, null, "저장된 다이어리가 없습니다", null, null, null)
+                    )
+                    // emptyDiaryContentsList Intent에 추가
+                    intent.putExtra("diaryContents", emptyDiaryContentsList.toTypedArray())
+
                     startActivity(intent)
                 }
             }

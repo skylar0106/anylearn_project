@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class DiaryContentAdapter(val diaryContents: List<MyDiaryMain.DiaryContent>)
+class DiaryContentAdapter(var diaryContents: List<MyDiaryMain.DiaryContent>)
     : RecyclerView.Adapter<DiaryContentAdapter.DiaryContentViewHolder>() {
     // 뷰 홀더 클래스 정의
     class DiaryContentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -27,8 +27,18 @@ class DiaryContentAdapter(val diaryContents: List<MyDiaryMain.DiaryContent>)
 
         // 데이터를 뷰 홀더의 뷰에 설정
         holder.contentsTextView.text = currentItem.contents
-        holder.hashtagTextView.text =
-            "Hashtags: ${currentItem.hashtag.joinToString(", ") { it.tag }}"
+        if(currentItem.hashtag != null)
+            holder.hashtagTextView.text =
+                "Hashtags: ${currentItem.hashtag?.joinToString(", ") { it.tag }}"
+        else
+            holder.hashtagTextView.text =
+                "Hashtags: "
+    }
+
+    // 다이어리 내용 갱신 메서드
+    fun updateDiaryContents(newDiaryContentsList: List<MyDiaryMain.DiaryContent>) {
+        diaryContents = newDiaryContentsList
+        notifyDataSetChanged()
     }
 
     // getItemCount: 데이터 아이템 수 반환
