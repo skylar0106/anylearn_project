@@ -52,13 +52,21 @@ class ScriptNameInput : AppCompatActivity() {
         sniBinding.nameInputHomeBtn.setOnClickListener{
             var title = sniBinding.editTitleInput.text.toString()
             var hashtagString = sniBinding.editSubjectInput.text.toString()
-            var hashtags = hashtagString.split(" ")
+            var hashtags = hashtagString.split(" ").toTypedArray()
+            Log.d("saveScripts", "title: $title hashtagString: $hashtagString")
+            for(i in hashtags){
+                Log.d("saveScripts", "$i, ")
+            }
 
             val saveJson = JSONObject()
             saveJson.put("type", "save")
             saveJson.put("message", "save")
             saveJson.put("title", "$title")
-            saveJson.put("hashtags", "$hashtags")
+            val hashtagArray = JSONArray()
+            for (hashtag in hashtags) {
+                hashtagArray.put(hashtag)
+            }
+            saveJson.put("hashtags", hashtagArray)
 
             webSocket.send(saveJson.toString())
             Log.d("saveScripts", "title: $title hashtags: $hashtags")

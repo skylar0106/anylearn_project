@@ -276,37 +276,11 @@ class MyScript : AppCompatActivity() {
                                     // 특정 문장을 클릭했을 때 수행할 작업을 여기에 추가
                                     selectedSentence = sentence
 
-
-                                    // 선택된 문장의 시작 인덱스와 끝 인덱스를 계산합니다.
-                                    val sltext = msBinding.scriptContent.text.toString()
-                                    val slstartIndex = sltext.indexOf(sentence)
-                                    val slendIndex = slstartIndex + sentence.length
-
-                                    // SpannableString을 생성합니다.
-                                    val slspannableString = SpannableString(sltext)
-
-                                    // 선택된 문장에 대한 배경색을 변경할 BackgroundColorSpan을 생성합니다.
-                                    val backgroundColorSpan = BackgroundColorSpan(Color.YELLOW) // 원하는 배경색으로 변경하세요.
-
-                                    // SpannableString에 배경색 Span을 적용합니다.
-                                    slspannableString.setSpan(
-                                        backgroundColorSpan,
-                                        slstartIndex,
-                                        slendIndex,
-                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                                    )
-
-                                    // 텍스트뷰에 SpannableString 설정
-                                    msBinding.scriptContent.text = slspannableString
-
                                     widget.invalidate()
-
                                 }
 
                                 override fun updateDrawState(ds: TextPaint) {
                                     super.updateDrawState(ds)
-
-                                    ds.color = Color.BLACK
 
                                     ds.isUnderlineText = false // 클릭 가능한 텍스트에 밑줄 추가
                                     ds.color = Color.BLACK
@@ -335,7 +309,6 @@ class MyScript : AppCompatActivity() {
                             val hashTagString = StringBuilder()
                             for (map in hashtag) {
                                 for ((key, value) in map) {
-                                    hashTagString.append("#")
                                     hashTagString.append(value).append(" ")
                                 }
                             }
@@ -382,17 +355,6 @@ class MyScript : AppCompatActivity() {
 
             }
         })
-    }
-    private fun clearSelectedSentence() {
-        val sltext = msBinding.scriptContent.text.toString()
-        val slspannableString = SpannableString(sltext)
-        val backgroundColorSpans = slspannableString.getSpans(0, slspannableString.length, BackgroundColorSpan::class.java)
-
-        for (backgroundColorSpan in backgroundColorSpans) {
-            slspannableString.removeSpan(backgroundColorSpan)
-        }
-
-        msBinding.scriptContent.text = slspannableString
     }
 
     private fun myscriptDelete(title: String) {
