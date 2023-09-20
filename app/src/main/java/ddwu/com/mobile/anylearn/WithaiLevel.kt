@@ -1,5 +1,6 @@
 package ddwu.com.mobile.anylearn
 
+
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -28,7 +29,7 @@ class WithaiLevel : AppCompatActivity() {
 
     lateinit var wlBinding: ActivityWithaiLevelBinding
     lateinit var client: OkHttpClient
-//    private lateinit var webSocket: WebSocket
+    //    private lateinit var webSocket: WebSocket
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var tts : TextToSpeech
 
@@ -272,8 +273,3 @@ class WithaiLevel : AppCompatActivity() {
         super.onDestroy()
     }
 }
-
-
-
-
-

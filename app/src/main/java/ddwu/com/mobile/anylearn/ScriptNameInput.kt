@@ -28,6 +28,9 @@ class ScriptNameInput : AppCompatActivity() {
             var hashtagString = sniBinding.editSubjectInput.text.toString()
             var hashtags = hashtagString.split(" ").toTypedArray()
             Log.d("saveScripts", "title: $title hashtagString: $hashtagString")
+            for(i in hashtags){
+                Log.d("saveScripts", "$i, ")
+            }
 
             val saveJson = JSONObject()
             saveJson.put("type", "save")

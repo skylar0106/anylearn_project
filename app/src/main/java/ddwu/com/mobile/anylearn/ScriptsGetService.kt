@@ -32,7 +32,7 @@ interface ScriptAddService {
         @Header("X-CSRFToken") csrfToken: String,
         @Header("Cookie") cookieToken: String,
         @Path("roomId") roomId: String,
-        @Body request: MyScript.ScriptAddRequestModel
+//        @Body request: MyScript.ScriptAddRequestModel
     ): Call<Void>
 }
 

@@ -1,9 +1,9 @@
 package ddwu.com.mobile.anylearn
-
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import ddwu.com.mobile.anylearn.*
 import ddwu.com.mobile.anylearn.databinding.ActivityScriptSaveChoiceBinding
 import org.json.JSONObject
 
