@@ -7,6 +7,7 @@ import ScriptsRCApiService
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Color.WHITE
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Spannable
@@ -24,6 +25,7 @@ import android.widget.Button
 import android.widget.TextView
 
 import android.widget.Toast
+import androidx.core.graphics.toColorInt
 import com.google.gson.annotations.SerializedName
 import ddwu.com.mobile.anylearn.databinding.ActivityMyScriptBinding
 import retrofit2.Call
@@ -34,13 +36,15 @@ import java.nio.charset.StandardCharsets
 
 class MyScript : AppCompatActivity() {
     lateinit var msBinding: ActivityMyScriptBinding
+    lateinit var selectedSentence: String
+    lateinit var dialog: Dialog
+    // MyScript 클래스 내부에 멤버 변수 추가
+    private var selectedSentenceStartIndex: Int = -1
+    private var selectedSentenceEndIndex: Int = -1
 
     companion object {
         var addDiaryChange: Int = 0
     }
-
-    lateinit var selectedSentence: String
-    lateinit var dialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +59,6 @@ class MyScript : AppCompatActivity() {
 //        val scriptContents = intent.getStringExtra("script_contents")
 //        val scriptAddDiary = intent.getIntExtra("script_addDiary", 0)
 //        val scriptHashTag = intent.getStringArrayExtra("script_hashtag")
-
         var scriptAddDiary = intent.getIntExtra("script_addDiary", 0)
 
         Log.d("script내용 myscript", "title: $scriptTitle")
@@ -82,14 +85,14 @@ class MyScript : AppCompatActivity() {
         }
 
 
-        msBinding.scriptChangedBtn.setOnClickListener{
-            if(selectedSentence != null)
+        msBinding.scriptChangedBtn.setOnClickListener {
+            if (selectedSentence != null)
                 scriptTitle?.let { getParaphrase(selectedSentence, it) }
         }
 
         // 이전 버튼 클릭 시
         msBinding.scriptPreBtn.setOnClickListener {
-            if(!msBinding.scriptSubject.text.toString().equals(scriptTitle))
+            if (!msBinding.scriptSubject.text.toString().equals(scriptTitle))
                 scriptTitle = msBinding.scriptSubject.text.toString()
             Log.d("title", "$scriptTitle")
             var currentScriptIndex = scriptTitleList?.indexOf(scriptTitle)
@@ -98,7 +101,7 @@ class MyScript : AppCompatActivity() {
                 if (currentScriptIndex > 0) {
                     currentScriptIndex-- // 현재 스크립트 인덱스를 이전 스크립트로 감소
                     val previousScriptTitle = scriptTitleList?.get(currentScriptIndex)
-                    if(previousScriptTitle != null) {
+                    if (previousScriptTitle != null) {
                         myscriptGet(previousScriptTitle) // 이전 스크립트의 정보를 서버에서 가져옴
                         Log.d("preindex", "$currentScriptIndex")
                     }
@@ -133,7 +136,6 @@ class MyScript : AppCompatActivity() {
             }
         }
 
-
         //스크립트 삭제 버튼
         msBinding.scriptDeleteBtn.setOnClickListener {
             if (scriptTitle != null) {
@@ -145,14 +147,6 @@ class MyScript : AppCompatActivity() {
         msBinding.scriptAddBtn.setOnClickListener {
             if (scriptTitle != null) {
                 myscriptAdd(scriptTitle!!)
-            }
-
-            msBinding.scriptChangedBtn.setOnClickListener {
-                if (selectedSentence != null)
-                    if (scriptTitle != null)
-                        getParaphrase(selectedSentence, scriptTitle!!)
-
-
             }
         }
     }
@@ -256,18 +250,6 @@ class MyScript : AppCompatActivity() {
                 response: Response<ScriptResponseModel>
             ) {
                 val responseBody = response.body()
-
-                val title = responseBody?.title
-                val hashtag = responseBody?.hashtag
-                val contents = responseBody?.contents
-                val learningDate = responseBody?.learningDate
-                val addDiary = responseBody?.addDiary
-                if (addDiary != null) {
-                    addDiaryChange = addDiary
-                }
-                val showExpr = responseBody?.showExpr
-                val inputExpr = responseBody?.inputExpr
-
                 // 클릭 가능한 문장을 담을 리스트
                 val clickableSentences = mutableListOf<Pair<String, ClickableSpan>>()
 
@@ -281,6 +263,8 @@ class MyScript : AppCompatActivity() {
                         val showExpr = responseBody.showExpr
                         val inputExpr = responseBody.inputExpr
 
+                        addDiaryChange = addDiary
+
                         Log.e("MyScript", "성공!")
 
                         // 문장별로 분리
@@ -293,22 +277,26 @@ class MyScript : AppCompatActivity() {
                                 override fun onClick(widget: View) {
                                     // 특정 문장을 클릭했을 때 수행할 작업을 여기에 추가
                                     selectedSentence = sentence
+
+                                    widget.invalidate()
                                 }
 
                                 override fun updateDrawState(ds: TextPaint) {
                                     super.updateDrawState(ds)
-                                    ds.color = Color.BLACK // 클릭 가능한 텍스트의 색상 변경 (예: 파란색)
+
                                     ds.isUnderlineText = false // 클릭 가능한 텍스트에 밑줄 추가
+                                    ds.color = Color.BLACK
                                 }
                             }
                             val startIndex = contents.indexOf(sentence)
                             val endIndex = startIndex + sentence.length
                             val spannableSentence = SpannableString(sentence)
+
                             spannableSentence.setSpan(
                                 clickableSpan,
                                 0,
                                 sentence.length,
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
                             )
                             clickableSentences.add(
                                 Pair(
@@ -336,6 +324,7 @@ class MyScript : AppCompatActivity() {
                         // SpannableString을 생성하여 텍스트뷰에 설정
                         val text = msBinding.scriptContent.text.toString()
                         val spannableString = SpannableString(text)
+
                         for ((sentence, clickableSpan) in clickableSentences) {
                             val startIndex = text.indexOf(sentence)
                             val endIndex = startIndex + sentence.length
@@ -346,7 +335,6 @@ class MyScript : AppCompatActivity() {
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                             )
                         }
-
                         // 텍스트뷰에 SpannableString 설정
                         val textView = msBinding.scriptContent
                         textView.text = spannableString
@@ -356,22 +344,12 @@ class MyScript : AppCompatActivity() {
 
                         msBinding.scriptContent.text = spannableString
                         msBinding.scriptContent.movementMethod = LinkMovementMethod.getInstance()
-
                     } else {
                         Log.e(
                             "MyScript",
                             "HTTP signup request failed. Error code: ${response.code()}"
                         )
                     }
-
-
-
-                    msBinding.scriptSubject.text = title
-                    msBinding.scriptDate.text = learningDate
-                    msBinding.scriptContent.text = contents
-                } else {
-                    Log.e("MyScriptGet", "HTTP request failed. Error code: ${response.code()}")
-
                 }
             }
 
@@ -380,6 +358,17 @@ class MyScript : AppCompatActivity() {
 
             }
         })
+    }
+    private fun clearSelectedSentence() {
+        val sltext = msBinding.scriptContent.text.toString()
+        val slspannableString = SpannableString(sltext)
+        val backgroundColorSpans = slspannableString.getSpans(0, slspannableString.length, BackgroundColorSpan::class.java)
+
+        for (backgroundColorSpan in backgroundColorSpans) {
+            slspannableString.removeSpan(backgroundColorSpan)
+        }
+
+        msBinding.scriptContent.text = slspannableString
     }
 
     private fun myscriptDelete(title: String) {
@@ -459,38 +448,34 @@ class MyScript : AppCompatActivity() {
         }
     }
 
-        private fun showPopupDialog(selectedSentence: String) {
-            // 다이얼로그 생성
-            dialog = Dialog(this)
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setCancelable(true)
-            dialog.setContentView(R.layout.paraphrase_popup) // 팝업 레이아웃 리소스 파일을 설정합니다.
+    private fun showPopupDialog(selectedSentence: String) {
+        // 다이얼로그 생성
+        dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.paraphrase_popup) // 팝업 레이아웃 리소스 파일을 설정합니다.
 
-            // 팝업 내용 설정
-            val popupText = dialog.findViewById<TextView>(R.id.popupText)
-            popupText.text = selectedSentence
+        // 팝업 내용 설정
+        val popupText = dialog.findViewById<TextView>(R.id.popupText)
+        popupText.text = selectedSentence
 
-            // 팝업 내 버튼 설정
-            val closeButton = dialog.findViewById<Button>(R.id.closeButton)
-            closeButton.setOnClickListener {
-                dialog.dismiss() // 다이얼로그 닫기
-            }
+        // 팝업 내 버튼 설정
+        val closeButton = dialog.findViewById<Button>(R.id.closeButton)
+        closeButton.setOnClickListener {
+            dialog.dismiss() // 다이얼로그 닫기
+        }
 
-            // 팝업 크기 및 위치 설정 (예: 가운데 정렬)
-            val layoutParams = WindowManager.LayoutParams()
-            layoutParams.copyFrom(dialog.window!!.attributes)
-            layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
-            layoutParams.gravity = android.view.Gravity.CENTER
+        // 팝업 크기 및 위치 설정 (예: 가운데 정렬)
+        val layoutParams = WindowManager.LayoutParams()
+        layoutParams.copyFrom(dialog.window!!.attributes)
+        layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
+        layoutParams.gravity = android.view.Gravity.CENTER
 
-            // 다이얼로그에 레이아웃 파라미터 설정
-            dialog.window!!.attributes = layoutParams
+        // 다이얼로그에 레이아웃 파라미터 설정
+        dialog.window!!.attributes = layoutParams
 
-            // 다이얼로그 표시
-            dialog.show()
-
-
+        // 다이얼로그 표시
+        dialog.show()
     }
 }
-
-
