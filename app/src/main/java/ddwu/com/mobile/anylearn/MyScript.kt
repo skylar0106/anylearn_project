@@ -7,6 +7,7 @@ import ScriptsRCApiService
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Color.WHITE
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Spannable
@@ -24,6 +25,7 @@ import android.widget.Button
 import android.widget.TextView
 
 import android.widget.Toast
+import androidx.core.graphics.toColorInt
 import com.google.gson.annotations.SerializedName
 import ddwu.com.mobile.anylearn.databinding.ActivityMyScriptBinding
 import retrofit2.Call
@@ -36,6 +38,7 @@ class MyScript : AppCompatActivity() {
     lateinit var msBinding: ActivityMyScriptBinding
     lateinit var selectedSentence: String
     lateinit var dialog: Dialog
+
 
     companion object {
         var addDiaryChange: Int = 0
@@ -273,6 +276,7 @@ class MyScript : AppCompatActivity() {
                                     // 특정 문장을 클릭했을 때 수행할 작업을 여기에 추가
                                     selectedSentence = sentence
 
+
                                     // 선택된 문장의 시작 인덱스와 끝 인덱스를 계산합니다.
                                     val sltext = msBinding.scriptContent.text.toString()
                                     val slstartIndex = sltext.indexOf(sentence)
@@ -294,22 +298,29 @@ class MyScript : AppCompatActivity() {
 
                                     // 텍스트뷰에 SpannableString 설정
                                     msBinding.scriptContent.text = slspannableString
+
+                                    widget.invalidate()
+
                                 }
 
                                 override fun updateDrawState(ds: TextPaint) {
                                     super.updateDrawState(ds)
+
                                     ds.color = Color.BLACK
+
                                     ds.isUnderlineText = false // 클릭 가능한 텍스트에 밑줄 추가
+                                    ds.color = Color.BLACK
                                 }
                             }
                             val startIndex = contents.indexOf(sentence)
                             val endIndex = startIndex + sentence.length
                             val spannableSentence = SpannableString(sentence)
+
                             spannableSentence.setSpan(
                                 clickableSpan,
                                 0,
                                 sentence.length,
-                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
                             )
                             clickableSentences.add(
                                 Pair(
@@ -371,6 +382,17 @@ class MyScript : AppCompatActivity() {
 
             }
         })
+    }
+    private fun clearSelectedSentence() {
+        val sltext = msBinding.scriptContent.text.toString()
+        val slspannableString = SpannableString(sltext)
+        val backgroundColorSpans = slspannableString.getSpans(0, slspannableString.length, BackgroundColorSpan::class.java)
+
+        for (backgroundColorSpan in backgroundColorSpans) {
+            slspannableString.removeSpan(backgroundColorSpan)
+        }
+
+        msBinding.scriptContent.text = slspannableString
     }
 
     private fun myscriptDelete(title: String) {
