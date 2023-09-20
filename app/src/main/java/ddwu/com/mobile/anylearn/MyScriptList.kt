@@ -134,6 +134,7 @@ class MyScriptList : AppCompatActivity() {
                     Log.d("onResponse", "성공")
                     val responseBody = response.body()
 
+                    var keyCheck = "1"
                     if (responseBody != null) {
                         Log.d("onResponse", "null아님")
                         for ((key, values) in responseBody) {

@@ -1,5 +1,7 @@
 package ddwu.com.mobile.anylearn
 
+import ScriptAddService
+import ScriptDeleteService
 import ScriptGetService
 import ScriptsRCApiService
 import android.app.Dialog
@@ -18,7 +20,9 @@ import android.util.Log
 import android.view.*
 import android.view.MenuItem
 import android.widget.Button
+
 import android.widget.TextView
+
 import android.widget.Toast
 import com.google.gson.annotations.SerializedName
 import ddwu.com.mobile.anylearn.databinding.ActivityMyScriptBinding
@@ -29,44 +33,119 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 class MyScript : AppCompatActivity() {
-    lateinit var msBinding : ActivityMyScriptBinding
-    lateinit var selectedSentence : String
+    lateinit var msBinding: ActivityMyScriptBinding
+    lateinit var selectedSentence: String
     lateinit var dialog: Dialog
+
+    companion object {
+        var addDiaryChange: Int = 0
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         msBinding = ActivityMyScriptBinding.inflate(layoutInflater)
         setContentView(msBinding.root)
+
         val intent = intent // 현재 액티비티의 Intent 객체를 가져옴
-        val scriptTitle = intent.getStringExtra("script_title") // "script_title" 키로 전달한 데이터를 받아옴
+
+        var scriptTitle = intent.getStringExtra("script_title") // "script_title" 키로 전달한 데이터를 받아옴
+        val scriptTitleList = intent.getStringArrayListExtra("script_title_list")
 //        val scriptDate = intent.getStringExtra("script_learningDate") // "script_date" 키로 전달한 데이터를 받아옴
 //        val scriptContents = intent.getStringExtra("script_contents")
 //        val scriptAddDiary = intent.getIntExtra("script_addDiary", 0)
 //        val scriptHashTag = intent.getStringArrayExtra("script_hashtag")
+        var scriptAddDiary = intent.getIntExtra("script_addDiary", 0)
+
         Log.d("script내용 myscript", "title: $scriptTitle")
 
-        if(scriptTitle != null) {
+        if (scriptTitle != null) {
             myscriptGet(scriptTitle)
         }
-        msBinding.scriptHomeBtn.setOnClickListener{
+        Log.d("script title list", "title list : $scriptTitleList")
+
+        msBinding.scriptHomeBtn.setOnClickListener {
             val intent = Intent(this, MainPage::class.java)
             startActivity(intent)
         }
-        msBinding.scriptListBtn.setOnClickListener{
+
+        msBinding.scriptListBtn.setOnClickListener {
             val intent = Intent(this, MyScriptList::class.java)
             startActivity(intent)
         }
+
         val settingButton: Button = findViewById(R.id.MyScriptSetting)
         settingButton.setOnClickListener {
             val intent = Intent(this, SettingPage::class.java)
             startActivity(intent)
         }
 
-        msBinding.scriptChangedBtn.setOnClickListener{
-            if(selectedSentence != null)
-                if(scriptTitle != null)
-                    getParaphrase(selectedSentence, scriptTitle)
+
+        msBinding.scriptChangedBtn.setOnClickListener {
+            if (selectedSentence != null)
+                scriptTitle?.let { getParaphrase(selectedSentence, it) }
+        }
+
+        // 이전 버튼 클릭 시
+        msBinding.scriptPreBtn.setOnClickListener {
+            if (!msBinding.scriptSubject.text.toString().equals(scriptTitle))
+                scriptTitle = msBinding.scriptSubject.text.toString()
+            Log.d("title", "$scriptTitle")
+            var currentScriptIndex = scriptTitleList?.indexOf(scriptTitle)
+            Log.d("index", "$currentScriptIndex")
+            if (currentScriptIndex != null) {
+                if (currentScriptIndex > 0) {
+                    currentScriptIndex-- // 현재 스크립트 인덱스를 이전 스크립트로 감소
+                    val previousScriptTitle = scriptTitleList?.get(currentScriptIndex)
+                    if (previousScriptTitle != null) {
+                        myscriptGet(previousScriptTitle) // 이전 스크립트의 정보를 서버에서 가져옴
+                        Log.d("preindex", "$currentScriptIndex")
+                    }
+                } else {
+                    // 현재 스크립트가 첫 번째 스크립트인 경우에 대한 처리
+                    Toast.makeText(this, "더 이상 이전 스크립트가 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        // 다음 버튼 클릭 시
+        msBinding.scriptNextBtn.setOnClickListener {
+            if (!msBinding.scriptSubject.text.toString().equals(scriptTitle))
+                scriptTitle = msBinding.scriptSubject.text.toString()
+            Log.d("title", "$scriptTitle")
+            var currentScriptIndex = scriptTitleList?.indexOf(scriptTitle)
+            Log.d("index", "$currentScriptIndex")
+            if (currentScriptIndex != null) {
+                if (scriptTitleList != null) {
+                    if (currentScriptIndex < scriptTitleList.size - 1) {
+                        currentScriptIndex++ // 현재 스크립트 인덱스를 다음 스크립트로 증가
+                        val nextScriptTitle = scriptTitleList?.get(currentScriptIndex)
+                        if (nextScriptTitle != null) {
+                            myscriptGet(nextScriptTitle) // 다음 스크립트의 정보를 서버에서 가져옴
+                            Log.d("nxtindex", "$currentScriptIndex")
+                        }
+                    } else {
+                        // 현재 스크립트가 마지막 스크립트인 경우에 대한 처리
+                        Toast.makeText(this, "더 이상 다음 스크립트가 없습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        //스크립트 삭제 버튼
+        msBinding.scriptDeleteBtn.setOnClickListener {
+            if (scriptTitle != null) {
+                myscriptDelete(scriptTitle!!)
+            }
+            finish()
+        }
+        //다이어리로 추가
+        msBinding.scriptAddBtn.setOnClickListener {
+            if (scriptTitle != null) {
+                myscriptAdd(scriptTitle!!)
+            }
         }
     }
+
     data class ScriptResponseModel(
         @SerializedName("title") val title: String,
         @SerializedName("hashtag") val hashtag: List<Map<String, String>>,
@@ -76,6 +155,11 @@ class MyScript : AppCompatActivity() {
         @SerializedName("show_expr") val showExpr: Int,
         @SerializedName("input_expr") val inputExpr: String
     )
+
+    data class ScriptAddRequestModel(
+        @SerializedName("add_diary") val addDiary: Int
+    )
+
     // 문자열을 문장으로 분리하는 함수
     fun splitTextIntoSentences(text: String): List<String> {
         // 정규 표현식을 사용하여 문장을 분리 (마침표, 물음표, 느낌표, 물결 기호)
@@ -86,12 +170,13 @@ class MyScript : AppCompatActivity() {
     data class PrResponseModel(
         @SerializedName("paraphrase") val paraphrase: String
     )
+
     data class PrRequestModel(
         @SerializedName("show_expr") val show_expr: Int,
         @SerializedName("input_expr") val input_expr: String
     )
 
-    private fun getParaphrase(sentence: String, title: String){
+    private fun getParaphrase(sentence: String, title: String) {
         val mySharedPreferences = MySharedPreferences(this)
         val apiService = RetrofitConfig(this).retrofit.create(ScriptsRCApiService::class.java)
         val csrfToken = mySharedPreferences.getCsrfToken()
@@ -103,7 +188,12 @@ class MyScript : AppCompatActivity() {
         val requestModel =
             PrRequestModel(show_expr = 1, input_expr = sentence)
 
-        val call: Call<PrResponseModel> = apiService.scriptGet( "$csrfToken","csrftoken=$cookieToken; sessionid=$sessionId", roomId, requestModel)
+        val call: Call<PrResponseModel> = apiService.scriptGet(
+            "$csrfToken",
+            "csrftoken=$cookieToken; sessionid=$sessionId",
+            roomId,
+            requestModel
+        )
 
         call.enqueue(object : Callback<PrResponseModel> {
             override fun onResponse(
@@ -118,12 +208,13 @@ class MyScript : AppCompatActivity() {
                         Log.e("Paraphrase", "성공!")
                         showPopupDialog(paraphrase)
                     }
-                }else
+                } else
                     Log.e(
                         "Paraphrase",
                         "HTTP request failed. Error code: ${response.code()}"
                     )
             }
+
             override fun onFailure(call: Call<PrResponseModel>, t: Throwable) {
                 Log.e("Signup", "HTTP withaiselect request error: ${t.message}")
 
@@ -131,7 +222,8 @@ class MyScript : AppCompatActivity() {
         })
     }
 
-    private fun myscriptGet(title: String){
+
+    private fun myscriptGet(title: String) {
         val mySharedPreferences = MySharedPreferences(this)
         val apiService = RetrofitConfig(this).retrofit.create(ScriptGetService::class.java)
         val csrfToken = mySharedPreferences.getCsrfToken()
@@ -140,10 +232,18 @@ class MyScript : AppCompatActivity() {
         val roomId = "$title"
         Log.d("url확인", "url: $roomId")
 
-        val call: Call<ScriptResponseModel> = apiService.scriptGet( "$csrfToken","csrftoken=$cookieToken; sessionid=$sessionId", roomId)
+
+        val call: Call<ScriptResponseModel> = apiService.scriptGet(
+            "$csrfToken",
+            "csrftoken=$cookieToken; sessionid=$sessionId",
+            roomId
+        )
 
         call.enqueue(object : Callback<ScriptResponseModel> {
-            override fun onResponse(call: Call<ScriptResponseModel>, response: Response<ScriptResponseModel>) {
+            override fun onResponse(
+                call: Call<ScriptResponseModel>,
+                response: Response<ScriptResponseModel>
+            ) {
                 val responseBody = response.body()
                 // 클릭 가능한 문장을 담을 리스트
                 val clickableSentences = mutableListOf<Pair<String, ClickableSpan>>()
@@ -158,6 +258,8 @@ class MyScript : AppCompatActivity() {
                         val showExpr = responseBody.showExpr
                         val inputExpr = responseBody.inputExpr
 
+                        addDiaryChange = addDiary
+
                         Log.e("MyScript", "성공!")
 
                         // 문장별로 분리
@@ -170,19 +272,51 @@ class MyScript : AppCompatActivity() {
                                 override fun onClick(widget: View) {
                                     // 특정 문장을 클릭했을 때 수행할 작업을 여기에 추가
                                     selectedSentence = sentence
+
+                                    // 선택된 문장의 시작 인덱스와 끝 인덱스를 계산합니다.
+                                    val sltext = msBinding.scriptContent.text.toString()
+                                    val slstartIndex = sltext.indexOf(sentence)
+                                    val slendIndex = slstartIndex + sentence.length
+
+                                    // SpannableString을 생성합니다.
+                                    val slspannableString = SpannableString(sltext)
+
+                                    // 선택된 문장에 대한 배경색을 변경할 BackgroundColorSpan을 생성합니다.
+                                    val backgroundColorSpan = BackgroundColorSpan(Color.YELLOW) // 원하는 배경색으로 변경하세요.
+
+                                    // SpannableString에 배경색 Span을 적용합니다.
+                                    slspannableString.setSpan(
+                                        backgroundColorSpan,
+                                        slstartIndex,
+                                        slendIndex,
+                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                                    )
+
+                                    // 텍스트뷰에 SpannableString 설정
+                                    msBinding.scriptContent.text = slspannableString
                                 }
 
                                 override fun updateDrawState(ds: TextPaint) {
                                     super.updateDrawState(ds)
-                                    ds.color = Color.BLACK // 클릭 가능한 텍스트의 색상 변경 (예: 파란색)
+                                    ds.color = Color.BLACK
                                     ds.isUnderlineText = false // 클릭 가능한 텍스트에 밑줄 추가
                                 }
                             }
                             val startIndex = contents.indexOf(sentence)
                             val endIndex = startIndex + sentence.length
                             val spannableSentence = SpannableString(sentence)
-                            spannableSentence.setSpan(clickableSpan, 0, sentence.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            clickableSentences.add(Pair(spannableSentence.toString(), clickableSpan))
+                            spannableSentence.setSpan(
+                                clickableSpan,
+                                0,
+                                sentence.length,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                            )
+                            clickableSentences.add(
+                                Pair(
+                                    spannableSentence.toString(),
+                                    clickableSpan
+                                )
+                            )
                         }
 
                         // 서버로부터 성공적인 응답을 받았을 때 수행할 작업
@@ -203,6 +337,7 @@ class MyScript : AppCompatActivity() {
                         // SpannableString을 생성하여 텍스트뷰에 설정
                         val text = msBinding.scriptContent.text.toString()
                         val spannableString = SpannableString(text)
+
                         for ((sentence, clickableSpan) in clickableSentences) {
                             val startIndex = text.indexOf(sentence)
                             val endIndex = startIndex + sentence.length
@@ -213,7 +348,6 @@ class MyScript : AppCompatActivity() {
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                             )
                         }
-
                         // 텍스트뷰에 SpannableString 설정
                         val textView = msBinding.scriptContent
                         textView.text = spannableString
@@ -223,7 +357,6 @@ class MyScript : AppCompatActivity() {
 
                         msBinding.scriptContent.text = spannableString
                         msBinding.scriptContent.movementMethod = LinkMovementMethod.getInstance()
-
                     } else {
                         Log.e(
                             "MyScript",
@@ -232,11 +365,91 @@ class MyScript : AppCompatActivity() {
                     }
                 }
             }
+
             override fun onFailure(call: Call<ScriptResponseModel>, t: Throwable) {
-                Log.e("Signup", "HTTP withaiselect request error: ${t.message}")
+                Log.e("MyScriptGet", "HTTP request error: ${t.message}")
+
             }
         })
     }
+
+    private fun myscriptDelete(title: String) {
+        val mySharedPreferences = MySharedPreferences(this)
+        val apiService = RetrofitConfig(this).retrofit.create(ScriptDeleteService::class.java)
+        val csrfToken = mySharedPreferences.getCsrfToken()
+        val cookieToken = mySharedPreferences.getCookieToken()
+        val sessionId = mySharedPreferences.getSessionId()
+        val roomId = "$title"
+
+        val call: Call<Void> = apiService.scriptDelete(
+            "$csrfToken",
+            "csrftoken=$cookieToken; sessionid=$sessionId",
+            roomId
+        )
+
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+
+                if (response.isSuccessful) {
+                    Log.e("MyScriptDelete", "성공!")
+                    // 서버로부터 성공적인 응답을 받았을 때 수행할 작업
+
+                } else {
+                    Log.e("MyScriptDelete", "HTTP request failed. Error code: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("MyScriptDelete", "HTTP request error: ${t.message}")
+
+            }
+        })
+    }
+
+    private fun myscriptAdd(title: String) {
+        val mySharedPreferences = MySharedPreferences(this)
+        val apiService = RetrofitConfig(this).retrofit.create(ScriptAddService::class.java)
+        val csrfToken = mySharedPreferences.getCsrfToken()
+        val cookieToken = mySharedPreferences.getCookieToken()
+        val sessionId = mySharedPreferences.getSessionId()
+        val roomId = "$title"
+        if (addDiaryChange == 0) {
+            addDiaryChange = 1
+
+            val requestModel = ScriptAddRequestModel(addDiary = addDiaryChange)
+            Log.d("addDiary", "addDiary: $addDiaryChange")
+
+            val call: Call<Void> = apiService.scriptAdd(
+                "$csrfToken",
+                "csrftoken=$cookieToken; sessionid=$sessionId",
+                roomId,
+                requestModel
+            )
+
+
+            call.enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+
+                    if (response.isSuccessful) {
+                        Log.e("MyScriptAdd", "성공!")
+                        // 서버로부터 성공적인 응답을 받았을 때 수행할 작업
+
+                    } else {
+                        Log.e("MyScriptAdd", "HTTP request failed. Error code: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Log.e("MyScriptAdd", "HTTP request error: ${t.message}")
+
+                }
+            })
+        } else {
+            Toast.makeText(this@MyScript, "이미 다이어리에 추가된 스크립트입니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun showPopupDialog(selectedSentence: String) {
         // 다이얼로그 생성
         dialog = Dialog(this)

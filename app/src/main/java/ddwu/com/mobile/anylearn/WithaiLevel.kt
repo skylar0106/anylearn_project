@@ -1,7 +1,7 @@
 package ddwu.com.mobile.anylearn
 
-
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -29,7 +29,7 @@ class WithaiLevel : AppCompatActivity() {
 
     lateinit var wlBinding: ActivityWithaiLevelBinding
     lateinit var client: OkHttpClient
-    //    private lateinit var webSocket: WebSocket
+//    private lateinit var webSocket: WebSocket
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var tts : TextToSpeech
 
@@ -72,7 +72,68 @@ class WithaiLevel : AppCompatActivity() {
             startActivity(intent)
         }
 
-        var level = intent.getStringExtra("level")
+        var level = intent.getIntExtra("level", 0)
+
+        when(level){
+            1 -> {
+                wlBinding.koreanSubtitle.alpha = 1F
+                wlBinding.englishSubtitle.alpha = 1F
+            }
+            2 -> {
+                wlBinding.koreanSubtitle.alpha = 0F
+                wlBinding.englishSubtitle.alpha = 1F
+            }
+            3 -> {
+                wlBinding.koreanSubtitle.alpha = 0F
+                wlBinding.englishSubtitle.alpha = 0F
+            }
+        }
+
+        wlBinding.subOption.setOnClickListener{
+            val alertDialogBuilder = AlertDialog.Builder(this)
+            alertDialogBuilder.setTitle("단계 선택")
+
+            val items = arrayOf("LEVEL 1","LEVEL 2", "LEVEL 3")
+            var selectedStep = -1
+
+            alertDialogBuilder.setSingleChoiceItems(items, -1) { dialog, which ->
+                selectedStep = which
+            }
+
+            alertDialogBuilder.setPositiveButton("확인") { dialog, which ->
+                // 팝업 확인 버튼을 눌렀을 때 선택한 단계에 대한 처리를 수행합니다.
+                if (selectedStep != -1) {
+                    // 선택한 단계를 사용하여 처리할 작업을 수행합니다.
+                    when (selectedStep) {
+                        0 -> {
+                            // 단계 1 선택 시 처리
+                            wlBinding.koreanSubtitle.alpha = 1F
+                            wlBinding.englishSubtitle.alpha = 1F
+                            level = 1
+                        }
+                        1 -> {
+                            // 단계 2 선택 시 처리
+                            wlBinding.koreanSubtitle.alpha = 0F
+                            wlBinding.englishSubtitle.alpha = 1F
+                            level = 2
+                        }
+                        2 -> {
+                            // 단계 3 선택 시 처리
+                            wlBinding.koreanSubtitle.alpha = 0F
+                            wlBinding.englishSubtitle.alpha = 0F
+                            level = 3
+                        }
+                    }
+                }
+            }
+
+            alertDialogBuilder.setNegativeButton("취소") { dialog, which ->
+                // 팝업 취소 버튼을 눌렀을 때 수행할 동작을 작성합니다.
+            }
+
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+        }
 
         val mySharedPreferences = MySharedPreferences(this)
         val receivedIntent = intent
@@ -221,9 +282,11 @@ class WithaiLevel : AppCompatActivity() {
 
                     // 영어 부분이 존재하면 TTS 실행
                     if (englishText.isNotEmpty()) {
-                        // UI 업데이트 코드 작성
-                        wlBinding.englishSubtitle.text = englishText
-                        speakText(englishText)
+                        if(!englishText.equals("Invalid type:  end-conversation")) {
+                            // UI 업데이트 코드 작성
+                            wlBinding.englishSubtitle.text = englishText
+                            speakText(englishText)
+                        }
                     }
 
                     // 한글 부분을 원하는 변수에 저장 (예: koreanVariable)
@@ -273,3 +336,8 @@ class WithaiLevel : AppCompatActivity() {
         super.onDestroy()
     }
 }
+
+
+
+
+

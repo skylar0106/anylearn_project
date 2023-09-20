@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import com.google.gson.annotations.SerializedName
 import ddwu.com.mobile.anylearn.databinding.ActivityWithaiSelectBinding
 import retrofit2.Call
@@ -32,21 +33,70 @@ class WithaiSelect : AppCompatActivity() {
         }
 
         wsBinding.subjectOkBtn.setOnClickListener {
-            val level = intent.getIntExtra("level", 1)
+            val level = intent.getIntExtra("level", 0)
             val situation = wsBinding.editSubject.text.toString()
             val myRole = wsBinding.userRoleEdit.text.toString()
             val gptRole = wsBinding.aiRoleEdit.text.toString()
 
             if (level != null) {
                 Log.d("WithaiSelect", "level: $level, situation: $situation, my_role: $myRole, gpt_role: $gptRole")
-                aiSelectInfo(level, situation, myRole, gptRole)
+                if(situation == "" || myRole == "" || gptRole == "")
+                    Toast.makeText(this, "역할과 주제를 모두 입력해주세요", Toast.LENGTH_SHORT).show()
+                else
+                    aiSelectInfo(level, situation, myRole, gptRole)
             }
             else{
                 Log.e("WithaiSelect", "levelNull!")
             }
         }
 
+        wsBinding.school.setOnClickListener{
+            val level = intent.getIntExtra("level", 0)
+            val situation = wsBinding.school.text.toString()
+            val myRole = "학생"
+            val gptRole = "선생님"
 
+            if (level != null)
+                aiSelectInfo(level, situation, myRole, gptRole)
+            else
+                Log.e("WithaiSelect", "levelNull!")
+        }
+
+        wsBinding.park.setOnClickListener{
+            val level = intent.getIntExtra("level", 0)
+            val situation = wsBinding.park.text.toString()
+            val myRole = "어른"
+            val gptRole = "어린이"
+
+            if (level != null)
+                aiSelectInfo(level, situation, myRole, gptRole)
+            else
+                Log.e("WithaiSelect", "levelNull!")
+        }
+
+        wsBinding.transport.setOnClickListener{
+            val level = intent.getIntExtra("level", 0)
+            val situation = wsBinding.transport.text.toString()
+            val myRole = "승객"
+            val gptRole = "대중교통 직원"
+
+            if (level != null)
+                aiSelectInfo(level, situation, myRole, gptRole)
+            else
+                Log.e("WithaiSelect", "levelNull!")
+        }
+
+        wsBinding.restaurant.setOnClickListener{
+            val level = intent.getIntExtra("level", 0)
+            val situation = wsBinding.restaurant.text.toString()
+            val myRole = "손님"
+            val gptRole = "점원"
+
+            if (level != null)
+                aiSelectInfo(level, situation, myRole, gptRole)
+            else
+                Log.e("WithaiSelect", "levelNull!")
+        }
     }
     data class SelectResponseModel(
         @SerializedName("id") val id: Int
@@ -85,6 +135,7 @@ class WithaiSelect : AppCompatActivity() {
                     Log.e("WithaiSelectResponse", "id: $id")
                     val intent = Intent(this@WithaiSelect, WithaiLevel::class.java)
                     intent.putExtra("roomId", id)
+                    intent.putExtra("level", level)
                     startActivity(intent)
                     // 서버로부터 성공적인 응답을 받았을 때 수행할 작업
                 } else {
