@@ -11,6 +11,18 @@ class MySharedPreferences(context: Context) {
     private val SESSION_ID_KEY = "session_id"
     private val CSRF_TOKEN_KEY = "csrf_token"
     private val COOKIE_TOKEN = "cookie_token"
+    private val TTS_BOOLEAN = "tts_boolean"
+
+    // TTS 상태를 저장하는 함수
+    fun saveTTSBoolean(TTSBoolean: Boolean) {
+        editor.putBoolean(TTS_BOOLEAN, TTSBoolean)
+        editor.apply()
+    }
+
+    // TTS 상태를 가져오는 함수
+    fun getTTSBoolean(): Boolean? {
+        return sharedPreferences.getBoolean(TTS_BOOLEAN, false)
+    }
 
     // 세션 ID를 저장하는 함수
     fun saveSessionId(sessionId: String) {

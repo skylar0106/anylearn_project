@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -146,6 +147,8 @@ class WithaiLevel : AppCompatActivity() {
             .addHeader("Cookie", "sessionid="+mySharedPreferences.getSessionId().toString()) // 쿠키 추가
             .build()
         val webSocketListener: WebSocketListener = MyWebSocketListener()
+
+        mySharedPreferences.getTTSBoolean()?.let { setTTSMute(it) }
 
         // tts 세팅
         tts = TextToSpeech(this) { status ->
@@ -329,6 +332,15 @@ class WithaiLevel : AppCompatActivity() {
             Log.d("Socket","Error : " + t.message)
         }
 
+    }
+
+    private fun setTTSMute(isMute: Boolean) {
+        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        if (isMute) {
+            audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true) // 미디어 스트림 음소거
+        } else {
+            audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false) // 미디어 스트림 음소거 해제
+        }
     }
     override fun onDestroy() {
         tts.stop()

@@ -14,6 +14,7 @@ class ModeSettingPage : AppCompatActivity() {
 
         val HomeSwitch: SwitchCompat = findViewById(R.id.ModeSettingPageHomeSwitch)
         val PublicSwitch: SwitchCompat = findViewById(R.id.ModeSettingPagePublicSwitch)
+        val mySharedPreferences = MySharedPreferences(this)
 
         // 스위치 상태 변경 시 색상 변경
         HomeSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { compoundButton, isChecked ->
@@ -22,11 +23,13 @@ class ModeSettingPage : AppCompatActivity() {
                 HomeSwitch.thumbDrawable = resources.getDrawable(R.drawable.shape_switch_thumb)
                 PublicSwitch.thumbDrawable = resources.getDrawable(R.drawable.shape_switch_thumb_off)
                 PublicSwitch.isChecked = false
+                mySharedPreferences.saveTTSBoolean(false)
             } else {
                 // switchButton이 체크되지 않은 경우
                 HomeSwitch.thumbDrawable = resources.getDrawable(R.drawable.shape_switch_thumb_off)
                 PublicSwitch.thumbDrawable = resources.getDrawable(R.drawable.shape_switch_thumb)
                 PublicSwitch.isChecked = true
+                mySharedPreferences.saveTTSBoolean(true)
             }
         })
         PublicSwitch.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { compoundButton, isChecked ->
@@ -35,11 +38,13 @@ class ModeSettingPage : AppCompatActivity() {
                 PublicSwitch.thumbDrawable = resources.getDrawable(R.drawable.shape_switch_thumb)
                 HomeSwitch.thumbDrawable = resources.getDrawable(R.drawable.shape_switch_thumb_off)
                 HomeSwitch.isChecked = false
+                mySharedPreferences.saveTTSBoolean(true)
             } else {
                 // switchButton이 체크되지 않은 경우
                 PublicSwitch.thumbDrawable = resources.getDrawable(R.drawable.shape_switch_thumb_off)
                 HomeSwitch.thumbDrawable = resources.getDrawable(R.drawable.shape_switch_thumb)
                 HomeSwitch.isChecked = true
+                mySharedPreferences.saveTTSBoolean(false)
             }
         })
 

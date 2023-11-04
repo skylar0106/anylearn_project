@@ -54,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="64dp"
         android:text="내 역할: "
         android:textSize="22sp"
         android:textStyle="bold"
@@ -66,7 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="64dp"
         android:ems="10"
         android:gravity="center_vertical"
         android:inputType="textPersonName"
@@ -82,20 +82,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:maxLength="10"
+        android:text="AI 역할: "
         android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userRoleText"
-        android:text="AI 역할: " />
+        app:layout_constraintTop_toBottomOf="@+id/userRoleText" />
 
     <EditText
         android:id="@+id/aiRoleEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:ems="10"
         android:gravity="center_vertical"
         android:inputType="textPersonName"
@@ -104,13 +104,13 @@
         android:paddingEnd="0dp"
         android:textSize="22sp"
         app:layout_constraintStart_toEndOf="@+id/userRoleText"
-        app:layout_constraintTop_toBottomOf="@+id/userRoleEdit" />
+        app:layout_constraintTop_toBottomOf="@+id/userRoleText" />
 
     <TextView
         android:id="@+id/subject_input"
         android:layout_width="351dp"
-        android:layout_height="131dp"
-        android:layout_marginTop="192dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/base_style"
         android:gravity="center_horizontal"
         android:paddingTop="20dp"
@@ -119,115 +119,34 @@
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/aiRoleEdit" />
 
     <EditText
         android:id="@+id/edit_subject"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="260dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="#FFFFFF"
         android:ems="10"
         android:inputType="textPersonName"
         android:textSize="25sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/subject_input"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/subject_input" />
 
     <Button
         android:id="@+id/subject_ok_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="24dp"
         android:text="확인"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textView7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subject_input"
-        app:layout_constraintVertical_bias="0.357" />
-
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="350dp"
-        android:layout_height="305dp"
-        android:layout_marginTop="383dp"
-        android:background="@drawable/base_style"
-        android:gravity="center_horizontal"
-        android:paddingTop="32dp"
-        android:text="주제 선택하기"
-        android:textColor="#FFFFFF"
-        android:textSize="25sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/school"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="61dp"
-        android:layout_marginTop="470dp"
-        android:background="@drawable/button2_style"
-        android:text="학교"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/park"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="225dp"
-        android:layout_marginTop="470dp"
-        android:background="@drawable/button2_style"
-        android:text="공원"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/transport"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="61dp"
-        android:layout_marginTop="535dp"
-        android:background="@drawable/button2_style"
-        android:text="버스/지하철"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/restaurant"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="225dp"
-        android:layout_marginTop="535dp"
-        android:background="@drawable/button2_style"
-        android:text="음식점"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/etc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="61dp"
-        android:layout_marginTop="600dp"
-        android:background="@drawable/button2_style"
-        android:text=". . ."
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/subject_input" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

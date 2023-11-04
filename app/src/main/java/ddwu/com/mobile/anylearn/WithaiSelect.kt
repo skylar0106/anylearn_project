@@ -21,16 +21,11 @@ class WithaiSelect : AppCompatActivity() {
         wsBinding = ActivityWithaiSelectBinding.inflate(layoutInflater)
         setContentView(wsBinding.root)
 
-        wsBinding.school.setOnClickListener {
-            val intent = Intent(this, WithaiLevel::class.java)
-            startActivity(intent)
-        }
-
-        wsBinding.park.setOnClickListener {
-            val notificationHelper = NotificationHelper()
-            notificationHelper.createNotificationChannel()
-            notificationHelper.showNotification()
-        }
+//        wsBinding.park.setOnClickListener {
+//            val notificationHelper = NotificationHelper()
+//            notificationHelper.createNotificationChannel()
+//            notificationHelper.showNotification()
+//        }
 
         wsBinding.subjectOkBtn.setOnClickListener {
             val level = intent.getIntExtra("level", 0)
@@ -50,53 +45,11 @@ class WithaiSelect : AppCompatActivity() {
             }
         }
 
-        wsBinding.school.setOnClickListener{
-            val level = intent.getIntExtra("level", 0)
-            val situation = wsBinding.school.text.toString()
-            val myRole = "학생"
-            val gptRole = "선생님"
 
-            if (level != null)
-                aiSelectInfo(level, situation, myRole, gptRole)
-            else
-                Log.e("WithaiSelect", "levelNull!")
-        }
 
-        wsBinding.park.setOnClickListener{
-            val level = intent.getIntExtra("level", 0)
-            val situation = wsBinding.park.text.toString()
-            val myRole = "어른"
-            val gptRole = "어린이"
 
-            if (level != null)
-                aiSelectInfo(level, situation, myRole, gptRole)
-            else
-                Log.e("WithaiSelect", "levelNull!")
-        }
 
-        wsBinding.transport.setOnClickListener{
-            val level = intent.getIntExtra("level", 0)
-            val situation = wsBinding.transport.text.toString()
-            val myRole = "승객"
-            val gptRole = "대중교통 직원"
 
-            if (level != null)
-                aiSelectInfo(level, situation, myRole, gptRole)
-            else
-                Log.e("WithaiSelect", "levelNull!")
-        }
-
-        wsBinding.restaurant.setOnClickListener{
-            val level = intent.getIntExtra("level", 0)
-            val situation = wsBinding.restaurant.text.toString()
-            val myRole = "손님"
-            val gptRole = "점원"
-
-            if (level != null)
-                aiSelectInfo(level, situation, myRole, gptRole)
-            else
-                Log.e("WithaiSelect", "levelNull!")
-        }
     }
     data class SelectResponseModel(
         @SerializedName("id") val id: Int
