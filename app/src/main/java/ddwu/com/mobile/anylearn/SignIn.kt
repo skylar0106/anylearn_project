@@ -125,7 +125,7 @@ class SignIn : AppCompatActivity() {
                     } else {
                         Log.e("CsrfToken", "Token response body is null")
 
-                        val memberck = findViewById<TextView>(R.id.memberCheck)
+                        val memberck = findViewById<TextView>(R.id.emailCheck)
                         memberck.alpha = 1F
                     }
                 } else {

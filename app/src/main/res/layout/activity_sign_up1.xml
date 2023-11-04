@@ -4,7 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/emailCheck"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:alpha="0"
+        android:foregroundTint="#FDFDFD"
+        android:gravity="center"
+        android:text="이미 회원가입된 이메일 입니다."
+        android:textColor="#FF0000"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <LinearLayout
+        android:id="@+id/linearLayout4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
@@ -31,8 +46,7 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_email"
