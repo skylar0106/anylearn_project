@@ -75,15 +75,15 @@ class MyDiaryScript : AppCompatActivity() {
         //수정하기 누르면 수정가능
         mdsBinding.diaryScriptChangeBtn.setOnClickListener{
             // RecyclerView의 모든 아이템에 있는 EditText의 focusable을 true로 설정하여 수정 가능하게 함
-            for (i in 0 until recyclerView.childCount) {
-                val viewHolder = recyclerView.getChildViewHolder(recyclerView.getChildAt(i))
-                if (viewHolder is DiaryContentAdapter.DiaryContentViewHolder) {
-                    viewHolder.contentsTextView.isFocusable = true
-                    viewHolder.contentsTextView.isFocusableInTouchMode = true
-                    viewHolder.hashtagTextView.isFocusable = true
-                    viewHolder.hashtagTextView.isFocusableInTouchMode = true
-                }
-            }
+//            for (i in 0 until recyclerView.childCount) {
+//                val viewHolder = recyclerView.getChildViewHolder(recyclerView.getChildAt(i))
+//                if (viewHolder is DiaryContentAdapter.DiaryContentViewHolder) {
+//                    viewHolder.contentsTextView.isFocusable = true
+//                    viewHolder.contentsTextView.isFocusableInTouchMode = true
+//                    viewHolder.hashtagTextView.isFocusable = true
+//                    viewHolder.hashtagTextView.isFocusableInTouchMode = true
+//                }
+//            }
             mdsBinding.diaryScriptUsercomment.isFocusable = true
             mdsBinding.diaryScriptUsercomment.isFocusableInTouchMode = true
         }
@@ -102,12 +102,14 @@ class MyDiaryScript : AppCompatActivity() {
             mdsBinding.diaryScriptUsercomment.isFocusable = false
             mdsBinding.diaryScriptUsercomment.isFocusableInTouchMode = false
 
-            DiaryUpdate(mdsBinding.diaryScriptUsercomment.text.toString(), adapter.getModifiedContents())
+            DiaryUpdate(mdsBinding.diaryScriptUsercomment.text.toString())
         }
 
         //삭제 누르면 다이어리 삭제
         mdsBinding.diaryScriptDeleteBtn.setOnClickListener {
-
+            DiaryRemove()
+            adapter.notifyDataSetChanged()
+            MyDiaryScriptInfo(selectedYear, selectedMonth, selectedDay)
         }
     }
 
@@ -189,9 +191,9 @@ class MyDiaryScript : AppCompatActivity() {
 
     data class RequestModel(
         @SerializedName("comment") val comment: String,
-        @SerializedName("diaryContents") val diaryContents: ArrayList<String>)
+        )
 
-    fun DiaryUpdate(comment: String, diatryContent: ArrayList<String>){
+    fun DiaryUpdate(comment: String){
         val mySharedPreferences = MySharedPreferences(this)
         lateinit var dateString : String
 
@@ -213,7 +215,7 @@ class MyDiaryScript : AppCompatActivity() {
         val sessionId = mySharedPreferences.getSessionId()
 
         val requestModel =
-            MyDiaryScript.RequestModel(comment = comment, diaryContents = diatryContent)
+            MyDiaryScript.RequestModel(comment = comment)
 
         val call: Call<Void> =
             apiService.postSubject( "$csrfToken","csrftoken=$cookieToken; sessionid=$sessionId", dateString, requestModel)
@@ -226,6 +228,45 @@ class MyDiaryScript : AppCompatActivity() {
                     Log.d("save", "success save")
                 } else {
                     Log.e("save", "failed save")
+                }
+            }
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("CsrfToken", "HTTP token request error: ${t.message}")
+            }
+        })
+    }
+    fun DiaryRemove(){
+        val mySharedPreferences = MySharedPreferences(this)
+        lateinit var dateString : String
+
+        if(selectedMonth < 10) {
+            if (selectedDay < 10)
+                dateString = "$selectedYear-0$selectedMonth-0$selectedDay"
+            else
+                dateString = "$selectedYear-0$selectedMonth-$selectedDay"
+        }
+        else {
+            if (selectedDay < 10)
+                dateString = "$selectedYear-$selectedMonth-0$selectedDay"
+            else
+                dateString = "$selectedYear-$selectedMonth-$selectedDay"
+        }
+        val apiService = RetrofitConfig(this).retrofit.create(MyDiaryDeleteApiService::class.java)
+        val csrfToken = mySharedPreferences.getCsrfToken()
+        val cookieToken = mySharedPreferences.getCookieToken()
+        val sessionId = mySharedPreferences.getSessionId()
+
+
+        val call: Call<Void> =
+            apiService.postSubject( "$csrfToken","csrftoken=$cookieToken; sessionid=$sessionId", dateString)
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    Log.d("remove", "success remove")
+                } else {
+                    Log.e("remove", "failed remove")
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
