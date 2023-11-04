@@ -1,6 +1,7 @@
 package ddwu.com.mobile.anylearn
 
 import LogoutApiService
+import RemoveApiService
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -50,6 +51,9 @@ class AccountSettingPage : AppCompatActivity() {
         logout.setOnClickListener{
             logout()
         }
+        asBinding.accountSettingPageRmove.setOnClickListener {
+            remove()
+        }
     }
     fun logout() {
         val mySharedPreferences = MySharedPreferences(this)
@@ -62,26 +66,44 @@ class AccountSettingPage : AppCompatActivity() {
             apiService.postSubject("$csrfToken", "csrftoken=$cookieToken; sessionid=$sessionId")
 
         call.enqueue(object : Callback<Void> {
-            override fun onResponse(
-                call: Call<Void>, response: Response<Void>
-            ) {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
-
                     Log.d("Logout", "logout 성공")
-
                     val intent = Intent(this@AccountSettingPage, SignIn::class.java)
-
                     startActivity(intent)
                 } else {
                     Log.e("Logout", "no response")
                 }
             }
-            override fun onFailure(
-                call: Call<Void>,
-                t: Throwable
-            ) {
-                TODO("Not yet implemented")
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("Logout", "logout Failure")
+            }
+        })
+    }
+    fun remove() {
+        val mySharedPreferences = MySharedPreferences(this)
+
+        val apiService = RetrofitConfig(this).retrofit.create(RemoveApiService::class.java)
+        val csrfToken = mySharedPreferences.getCsrfToken()
+        val cookieToken = mySharedPreferences.getCookieToken()
+        val sessionId = mySharedPreferences.getSessionId()
+        val call: Call<Void> =
+            apiService.postSubject("$csrfToken", "csrftoken=$cookieToken; sessionid=$sessionId")
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    Log.d("Logout", "logout 성공")
+                    val intent = Intent(this@AccountSettingPage, SignIn::class.java)
+                    startActivity(intent)
+                } else {
+                    Log.e("Logout", "no response")
+                }
+            }
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("Logout", "logout Failure")
             }
         })
     }

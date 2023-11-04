@@ -104,6 +104,11 @@ class MyDiaryScript : AppCompatActivity() {
 
             DiaryUpdate(mdsBinding.diaryScriptUsercomment.text.toString(), adapter.getModifiedContents())
         }
+
+        //삭제 누르면 다이어리 삭제
+        mdsBinding.diaryScriptDeleteBtn.setOnClickListener {
+
+        }
     }
 
     private fun calculatePreviousDate (year: Int, month: Int, day: Int) {

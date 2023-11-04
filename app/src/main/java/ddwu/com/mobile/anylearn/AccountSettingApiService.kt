@@ -11,3 +11,19 @@ interface AccountSettingApiService {
     @Header("Cookie") cookieToken: String,
     ): Call<SettingPageAdapter.AccountResponseModel>
 }
+interface LogoutApiService {
+    //    @Headers("Content-Type: application/json")
+    @POST("api/v1/users/sign_out")
+    fun postSubject(
+        @Header("X-Csrftoken") csrfToken: String,
+        @Header("Cookie") cookieToken: String,
+    ): Call<Void>
+}
+interface RemoveApiService {
+    //    @Headers("Content-Type: application/json")
+    @DELETE("api/v1/users/me")
+    fun postSubject(
+        @Header("X-Csrftoken") csrfToken: String,
+        @Header("Cookie") cookieToken: String,
+    ): Call<Void>
+}
