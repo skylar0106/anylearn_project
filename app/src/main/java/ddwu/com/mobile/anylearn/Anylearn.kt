@@ -23,5 +23,7 @@ class Anylearn : AppCompatActivity() {
             startActivity(intent)
             finish() // 현재 액티비티 종료
         }, delayMillis)
+
+
     }
 }

@@ -19,7 +19,7 @@ class SettingPage : AppCompatActivity() {
         menuRecyclerView.layoutManager = layoutManager
 
         // 데이터 리스트 생성 (예시)
-        val menuItems = listOf("계정 설정", "알림 설정", "화면 설정", "모드 설정")
+        val menuItems = listOf("계정 설정", "알림 설정", "모드 설정")
 
         // 어댑터 설정
         val adapter = SettingPageAdapter(menuItems, this)

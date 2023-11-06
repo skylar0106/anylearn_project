@@ -50,6 +50,8 @@ class SignIn : AppCompatActivity() {
                     Log.e(KakaoLogin.TAG, "카카오계정으로 로그인 실패", error)
                 } else if (token != null) {
                     Log.i(KakaoLogin.TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
+                    val intent = Intent(this@SignIn, MainPage::class.java)
+                    startActivity(intent)
                 }
             }
 
@@ -69,6 +71,8 @@ class SignIn : AppCompatActivity() {
                         UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
                     } else if (token != null) {
                         Log.i(KakaoLogin.TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+                        val intent = Intent(this@SignIn, MainPage::class.java)
+                        startActivity(intent)
                     }
                 }
             } else {

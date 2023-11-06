@@ -39,11 +39,6 @@ class SignUp1 : AppCompatActivity() {
             DatePickerDialog(this, data, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
         }
 
-        var emailFlag = 0
-        suBinding1.btnEmail.setOnClickListener {
-            emailFlag = emailCheck(suBinding1.editEmail.text.toString())
-            Log.e("EmailCheck", "flag: ${emailFlag}")
-        }
         suBinding1.btnStart.setOnClickListener{
             val email = suBinding1.editEmail.text.toString()
             val name = suBinding1.editName.text.toString()
