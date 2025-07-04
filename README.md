@@ -1,21 +1,14 @@
-# TikiTaka
-Spring Boot 기반 연애 상대 매칭 웹사이트
+# Anylearn
+AI 기반 영어 회화 학습 Android 애플리케이션
 
 ## 🛠️ 개발 환경 및 기술
-- Java 17
-- Spring Boot, Spring MVC
-- JSP, JSTL
-- Oracle DB
-- Maven
+- Kotlin
+- Android Studio
+- Voice Recognition API
+- Fragment, ViewPager
 
 ## 🎯 주요 기능 및 역할
-- 회원가입: 기본 정보 및 이상형 정보 입력, DB 저장
-- 로그인 및 세션 관리
-- 마이페이지: 회원 정보 및 이상형 정보 조회/수정
-- 매칭 기능: 매칭 요청, 거절, 수락 관리
-- 이메일, 전화번호를 통한 회원 인증 및 관리
-
-## 🔗 프로젝트 특징
-- DB Entity 및 DTO 기반으로 회원 및 이상형 데이터 분리 관리
-- 세션 기반 사용자 인증 처리
-- JSP를 통한 서버 사이드 렌더링
+- 시나리오 기반 대화 화면 구성
+- 음성 인식 결과 출력 및 사용자 인터랙션
+- 프래그먼트 간 화면 전환 및 UI 구성
+- 사용자 발화 기록 출력 및 피드백 표시
